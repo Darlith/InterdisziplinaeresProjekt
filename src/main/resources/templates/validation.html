@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="de" layout:decorator="layout/validationHeader">
+<head>
+  <title>Validation</title>
+</head>
+<body>
+            <div class="content" layout:fragment="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <form id="signupForm" action="" method="">
+                                    <div class="card-header card-header-icon" data-background-color="blue">
+										<h4 class="card-title">Register</h4>
+                                    </div>
+                                    <div class="card-content">
+                                        <h4 class="card-title">Register Forms</h4>
+                                        
+                                        <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                                            <input class="form-text" name="validate_email" type="text" required="required"/>
+                                            <span class="bar"></span>
+                                            <label>Email Address <small>*</small></label>
+                                        </div>
+                                        <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                                            <input class="form-text" name="validate_password" id="validate_password" type="password" required="true" />
+                                            <span class="bar"></span>
+                                            <label>Password<small>*</small></label>
+                                        </div>
+                                        <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                                            <input class="form-text" name="validate_password_confirmation" id="registerPasswordConfirmation" type="password" required="true" equalTo="#registerPassword" />
+                                            <span class="bar"></span>
+                                            <label>Confirm Password<small>*</small></label>
+                                        </div>
+                                        <div class="category form-category">
+                                            <small>*</small> Required fields</div>
+                                        <div class="form-footer text-right">
+<!--                                         <div class="row"> -->
+<!--                                             <label class="col-sm-2 label-on-left">Input with success</label> -->
+<!--                                             <div class="col-sm-10"> -->
+<!--                                                 <div class="form-group label-floating is-empty has-success"> -->
+<!--                                                     <label class="control-label"></label> -->
+<!--                                                     <input type="text" class="form-control" value="Success"/> -->
+<!--                                                     <span class="material-icons form-control-feedback">✔</span> -->
+<!--                                                 </div> -->
+<!--                                             </div> -->
+<!--                                         </div> -->
+                                            <div class="checkbox pull-left">
+                                                <label>
+                                                    <input type="checkbox" name="optionsCheckboxes"/> Subscribe to newsletter
+                                                </label>
+                                            </div>
+                                            <button type="submit" class="btn btn-info btn-fill">Register</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <form id="LoginValidation" action="#" method="">
+                                    <div class="card-header card-header-icon" data-background-color="devkGreen">
+<!--                                         <i class="material-icons">contacts</i> -->
+										<h4 class="card-title">Kontakt</h4>
+                                    </div>
+                                    <div class="card-content">
+                                        <h4 class="card-title">Login Form</h4>
+                                        <div class="form-group label-floating">
+                                            <label class="control-label">Email Address
+                                                <star>*</star>
+                                            </label>
+                                            <input class="form-control" name="email" type="text" email="true" required="true" />
+                                        </div>
+                                        <div class="form-group label-floating">
+                                            <label class="control-label">Password
+                                                <star>*</star>
+                                            </label>
+                                            <input class="form-control" name="password" type="password" required="true" />
+                                        </div>
+                                        <div class="category form-category">
+                                            <star>*</star> Required fields</div>
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-devk btn-fill btn-wd">Register</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="card">
+                                <form id="TypeValidation" class="form-horizontal" action="#" method="">
+                                    <div class="card-header card-header-text" data-background-color="rose">
+                                        <h4 class="card-title">Type Validation</h4>
+                                    </div>
+                                    <div class="card-content">
+                                        <div class="row">
+                                            <label class="col-sm-2 label-on-left">Required Text</label>
+                                            <div class="col-sm-7">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label"></label>
+                                                    <input class="form-control" type="text" name="required" required="true" />
+                                                </div>
+                                            </div>
+                                            <label class="col-sm-3 label-on-right">
+                                                <code>required</code>
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-sm-2 label-on-left">Email</label>
+                                            <div class="col-sm-7">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label"></label>
+                                                    <input class="form-control" type="text" name="email" email="true" />
+                                                </div>
+                                            </div>
+                                            <label class="col-sm-3 label-on-right">
+                                                <code>email="true"</code>
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-sm-2 label-on-left">Number</label>
+                                            <div class="col-sm-7">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label"></label>
+                                                    <input class="form-control" type="text" name="number" number="true" />
+                                                </div>
+                                            </div>
+                                            <label class="col-sm-3 label-on-right">
+                                                <code>number="true"</code>
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-sm-2 label-on-left">Url</label>
+                                            <div class="col-sm-7">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label"></label>
+                                                    <input class="form-control" type="text" name="url" url="true.html" />
+                                                </div>
+                                            </div>
+                                            <label class="col-sm-3 label-on-right">
+                                                <code>url="true"</code>
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-sm-2 label-on-left">Equal to</label>
+                                            <div class="col-sm-3">
+                                                <div class="form-group label-floating column-sizing">
+                                                    <label class="control-label"></label>
+                                                    <input class="form-control" id="idSource" type="text" placeholder="#idSource" />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group label-floating column-sizing">
+                                                    <label class="control-label"></label>
+                                                    <input class="form-control" id="idDestination" type="text" placeholder="#idDestination" equalTo="#idSource" />
+                                                </div>
+                                            </div>
+                                            <label class="col-sm-4 label-on-right">
+                                                <code>equalTo="#idSource"</code>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer text-center">
+                                        <button type="submit" class="btn btn-rose btn-fill">Validate Inputs</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="card">
+                                <form id="RangeValidation" class="form-horizontal" action="#" method="">
+                                    <div class="card-header card-header-text" data-background-color="rose">
+                                        <h4 class="card-title">Range Validation</h4>
+                                    </div>
+                                    <div class="card-content">
+                                        <div class="row">
+                                            <label class="col-sm-2 label-on-left">Min Length</label>
+                                            <div class="col-sm-7">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label"></label>
+                                                    <input class="form-control" type="text" name="min_length" minLength="5" />
+                                                </div>
+                                            </div>
+                                            <label class="col-sm-3 label-on-right">
+                                                <code>minLength="5"</code>
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-sm-2 label-on-left">Max Length</label>
+                                            <div class="col-sm-7">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label"></label>
+                                                    <input class="form-control" type="text" name="max_length" maxLength="5" />
+                                                </div>
+                                            </div>
+                                            <label class="col-sm-3 label-on-right">
+                                                <code>maxLength="5"</code>
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-sm-2 label-on-left">Range</label>
+                                            <div class="col-sm-7">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label"></label>
+                                                    <input class="form-control" type="text" name="range" range="[6,10]" />
+                                                </div>
+                                            </div>
+                                            <label class="col-sm-3 label-on-right">
+                                                <code>range="[6,10]"</code>
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-sm-2 label-on-left">Min Value</label>
+                                            <div class="col-sm-7">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label"></label>
+                                                    <input class="form-control" type="text" name="min" min="6" />
+                                                </div>
+                                            </div>
+                                            <label class="col-sm-3 label-on-right">
+                                                <code>min="6"</code>
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-sm-2 label-on-left">Max Value</label>
+                                            <div class="col-sm-7">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label"></label>
+                                                    <input class="form-control" type="text" name="max" max="6" />
+                                                </div>
+                                            </div>
+                                            <label class="col-sm-3 label-on-right">
+                                                <code>max="6"</code>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer text-center">
+                                        <button type="submit" class="btn btn-rose btn-fill">Validate Inputs</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+</body>
+<script type="text/javascript" layout:fragment="selfScripts">
+//<![CDATA[
+$(document).ready(function(){
+
+  $("#signupForm").validate({
+    errorElement: "em",
+    errorPlacement: function(error, element) {
+      $(element.parent("div").addClass("form-animate-error"));
+      error.appendTo(element.parent("div"));
+    },
+    success: function(label) {
+      $(label.parent("div").removeClass("form-animate-error"));
+    },
+    rules: {
+      validate_firstname: "required",
+      validate_lastname: "required",
+      validate_username: {
+        required: true,
+        minlength: 2
+      },
+      validate_password: {
+        required: true,
+        minlength: 5
+      },
+      validate_password_confirmation: {
+        required: true,
+        minlength: 5,
+        equalTo: "#validate_password"
+      },
+      validate_email: {
+        required: true,
+        email: true
+      },
+      validate_agree: "required"
+    },
+    messages: {
+      validate_firstname: "Bitte geben Sie Ihren Vornamen an",
+      validate_lastname: "Bitte geben Sie Ihren Nachnamen an",
+      validate_username: {
+        required: "Bitte geben Sie Ihren Benutzernamen ein",
+        minlength: "Ihr Benutzername muss mindestens aus 2 Zeichen bestehen"
+      },
+      validate_password: {
+        required: "Bitte geben Sie ein Passwort an",
+        minlength: "Ihr Passwort muss mindestens 5 Zeichen lang sein"
+      },
+      validate_password_confirmation: {
+        required: "Bitte geben Sie ein Passwort an",
+        minlength: "Ihr Passwort muss mindestens 5 Zeichen lang sein",
+        equalTo: "Bitte wiederholen Sie das Passwort korrekt"
+      },
+      validate_email: "Bitte geben Sie eine valide Email an",
+      validate_agree: "Bitte akzeptieren Sie unsere Police"
+    }
+  });
+// propose username by combining first- and lastname
+  $("#validate_username").focus(function() {
+    var firstname = $("#validate_firstname").val();
+    var lastname = $("#validate_lastname").val();
+    if (firstname && lastname && !this.value) {
+      this.value = firstname + "." + lastname;
+    }
+  });
+});
+//]]>
+</script>
+
+
+<!-- Mirrored from demos.creative-tim.com/material-dashboard-pro/examples/forms/validation.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 27 Jan 2017 20:35:48 GMT -->
+</html>

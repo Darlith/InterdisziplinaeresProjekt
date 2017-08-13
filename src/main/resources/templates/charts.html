@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="de" layout:decorator="layout/validationHeader">
+<head>
+<title>Diagramme</title>
+</head>
+
+<body>
+	<div class="content" layout:fragment="content">
+		<div class="container-fluid">
+
+
+
+			<div class="row">
+				<div class="col-md-6">
+					<div class="card">
+						<div class="card-header card-header-icon"
+							data-background-color="devkOrange">
+							<i class="material-icons">timeline</i>
+						</div>
+						<div class="card-content">
+							<h4 class="card-title">
+								Zoom Plugin <small> - Rounded</small>
+							</h4>
+						</div>
+						<div id="Chart3" class="ct-chart"></div>
+					<button class="btn btn-devkOrange pull-right" style="margin:0.5%;" id="resetBtn">Reset Zoom</button>
+					</div>
+				</div>
+			</div>
+
+
+
+
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card">
+						<div class="card-header card-header-icon"
+							data-background-color="devkGreen">
+							<i class="material-icons">timeline</i>
+						</div>
+						<div class="card-content">
+							<h4 class="card-title">
+								Axentitle Plugin <small> - Rounded</small>
+							</h4>
+						</div>
+						<div id="colouredRoundedLineChart2" class="ct-chart"></div>
+					</div>
+				</div>
+			</div>
+
+
+
+
+			<div class="row">
+				<div class="col-md-4">
+					<div class="card card-chart">
+						<div class="card-header" data-background-color="rose">
+							<div id="roundedLineChart" class="ct-chart"></div>
+						</div>
+						<div class="card-content">
+							<h4 class="card-title">Rounded Line Chart</h4>
+							<p class="category">Line Chart</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card card-chart">
+						<div class="card-header" data-background-color="orange">
+							<div id="straightLinesChart" class="ct-chart"></div>
+						</div>
+						<div class="card-content">
+							<h4 class="card-title">Straight Lines Chart</h4>
+							<p class="category">Line Chart with Points</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card card-chart">
+						<div class="card-header" data-background-color="blue">
+							<div id="simpleBarChart" class="ct-chart"></div>
+						</div>
+						<div class="card-content">
+							<h4 class="card-title">Simple Bar Chart</h4>
+							<p class="category">Bar Chart</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="card">
+						<div class="card-header card-header-icon"
+							data-background-color="blue">
+							<i class="material-icons">timeline</i>
+						</div>
+						<div class="card-content">
+							<h4 class="card-title">
+								Coloured Line Chart <small> - Rounded</small>
+							</h4>
+						</div>
+						<div id="colouredRoundedLineChart" class="ct-chart"></div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="card">
+						<div class="card-header card-header-icon"
+							data-background-color="rose">
+							<i class="material-icons">insert_chart</i>
+						</div>
+						<div class="card-content">
+							<h4 class="card-title">
+								Multiple Bars Chart <small>- Bar Chart</small>
+							</h4>
+						</div>
+						<div id="multipleBarsChart" class="ct-chart"></div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-7">
+					<div class="card">
+						<div class="card-header card-header-icon"
+							data-background-color="blue">
+							<i class="material-icons">timeline</i>
+						</div>
+						<div class="card-content">
+							<h4 class="card-title">
+								Coloured Bars Chart <small> - Rounded</small>
+							</h4>
+						</div>
+						<div id="colouredBarsChart" class="ct-chart"></div>
+					</div>
+				</div>
+				<div class="col-md-5">
+					<div class="card">
+						<div class="card-header card-header-icon"
+							data-background-color="red">
+							<i class="material-icons">pie_chart</i>
+						</div>
+						<div class="card-content">
+							<h4 class="card-title">Pie Chart</h4>
+						</div>
+						<div id="chartPreferences" class="ct-chart"></div>
+						<div class="card-footer">
+							<h6>Legend</h6>
+							<i class="fa fa-circle text-info"></i> Apple <i
+								class="fa fa-circle text-warning"></i> Samsung <i
+								class="fa fa-circle text-danger"></i> Windows Phone
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" layout:fragment="selfScripts">
+	//<![CDATA[
+	$(document).ready(
+			function() {
+				demo.initCharts();
+
+				var data = {
+					series : [ [ {
+						x : 1,
+						y : 100
+					}, {
+						x : 2,
+						y : 50
+					}, {
+						x : 3,
+						y : 25
+					}, {
+						x : 4,
+						y : 66
+					}, {
+						x : 5,
+						y : 30
+					}, {
+						x : 6,
+						y : 22
+					} ] ]
+				};
+
+				var options = {
+					axisX : {
+						type : Chartist.AutoScaleAxis
+					},
+					axisY : {
+						type : Chartist.AutoScaleAxis
+					},
+					height : '300px',
+					classNames : {
+						point : 'ct-point ct-devkOrange',
+						line : 'ct-line ct-devkOrange'
+					},
+					plugins : [ Chartist.plugins.zoom({
+						onZoom : onZoom
+					}) ]
+				};
+
+				var chart = Chartist.Line('.ct-chart', data, options);
+				var resetFnc;
+				function onZoom(chart, reset) {
+					resetFnc = reset;
+				}
+				
+				var btn = document.getElementById("resetBtn");
+				btn.addEventListener('click', function() {
+					console.log(resetFnc);
+					resetFnc && resetFnc();
+				});
+				var parent = document.querySelector('#chart3 .chart');
+				
+				
+				
+				
+				
+				
+
+				dataColouredRoundedLineChart2 = {
+					labels : [ '\'06', '\'07', '\'08', '\'09', '\'10', '\'11',
+							'\'12', '\'13', '\'14', '\'15' ],
+					series : [ [ 287, 480, 290, 554, 690, 690, 500, 752, 650,
+							900, 0 ] ]
+				};
+
+				optionsColouredRoundedLineChart2 = {
+					lineSmooth : Chartist.Interpolation.cardinal({
+						tension : 10
+					}),
+					axisY : {
+						showGrid : true,
+						offset : 60
+					},
+					axisX : {
+						showGrid : false,
+						offset : 60
+					},
+					low : 0,
+					high : 1000,
+					showPoint : true,
+					height : '300px',
+					classNames : {
+						point : 'ct-point ct-devkGreen',
+						line : 'ct-line ct-devkGreen'
+					},
+					//AxisTitle Plugin
+					plugins : [ Chartist.plugins.ctAxisTitle({
+						axisX : {
+							axisTitle : 'Zeit (Minuten)',
+							axisClass : 'ct-axis-title',
+							offset : {
+								x : 0,
+								y : 50
+							},
+							textAnchor : 'middle'
+						},
+						axisY : {
+							axisTitle : 'Ziele',
+							axisClass : 'ct-axis-title',
+							offset : {
+								x : 0,
+								y : -10
+							},
+							textAnchor : 'middle',
+							flipTitle : false
+						}
+					}) ]
+				};
+
+				var colouredRoundedLineChart2 = new Chartist.Line(
+						'#colouredRoundedLineChart2',
+						dataColouredRoundedLineChart2,
+						optionsColouredRoundedLineChart2);
+
+				md.startAnimationForLineChart(colouredRoundedLineChart2);
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+
+				//         Chartist.Line('.ct-chart', {
+				//         	  labels: ['0', '10', '20', '30', '40', '50', '60', '70', '80'],
+				//         	  series: [[0, 40, 20, 90, 115, 170, 160, 180, 200]]
+				//         	}, {
+				//         	  chartPadding: {
+				//         	    top: 20,
+				//         	    right: 20,
+				//         	    left: 20,
+				//         	    bottom: 25
+				//         	  },
+				//         	  axisY: {
+				//         	    onlyInteger: true
+				//         	  },
+				//         	  low: 0,
+				//               high: 200,
+				//               height: '300px',
+				//               classNames: {
+				//                   point: 'ct-point ct-devkGreen',
+				//                   line: 'ct-line ct-devkGreen'
+				//               },
+				//         	  plugins: [
+				//         	    Chartist.plugins.ctAxisTitle({
+				//         	      axisX: {
+				//         	        axisTitle: 'Time (mins)',
+				//         	        axisClass: 'ct-axis-title',
+				//         	        offset: {
+				//         	          x: 0,
+				//         	          y: 50
+				//         	        },
+				//         	        textAnchor: 'middle'
+				//         	      },
+				//         	      axisY: {
+				//         	        axisTitle: 'Goals',
+				//         	        axisClass: 'ct-axis-title',
+				//         	        offset: {
+				//         	          x: 0,
+				//         	          y: -10
+				//         	        },
+				//         	        textAnchor: 'middle',
+				//         	        flipTitle: false
+				//         	      }
+				//         	    })
+				//         	  ]
+				//         	});
+			});
+	//]]>
+</script>
+</html>

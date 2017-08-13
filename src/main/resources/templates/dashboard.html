@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="de" layout:decorator="layout/validationHeader">
+<head>
+<title>Dashboard</title>
+</head>
+
+<body>
+	<div class="content" layout:fragment="content">
+		<div class="container-fluid">
+
+					<div class="header text-center">
+                        <h3 class="title">Willkommen!</h3>
+                        <h4 class="category">Diese Seite wurde extra für Sie angefertigt!
+                        </h4>
+                    </div>
+
+			<div class="row">
+				<div class="col-md-6">
+					<div class="card">
+						<div class="card-header card-header-icon"
+							data-background-color="devkOrange">
+							<i class="material-icons">attachment</i>
+						</div>
+						<div class="card-content">
+							<h4 class="card-title">
+								Boxen <small> - schön</small>
+							</h4>
+							<h5 class="card-title">
+							In diesen Containern kann der vereinzelnte Content hervorgehoben werden. 
+							Diese können beliebig groß gestaltet werden.
+							Probieren Sie es einfach aus!
+							</h5>
+						</div>
+						<div id="Chart3" class="ct-chart"></div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="card">
+						<div class="card-header card-header-icon"
+							data-background-color="rose">
+							<i class="material-icons">cloud</i>
+						</div>
+						<div class="card-content">
+							<h4 class="card-title">
+								Beispiele <small> - großartig</small>
+							</h4>
+							<h5 class="card-title">
+							Dazu gibt es natürlich Beispiele auf den Folgeseiten: <br/><br/>
+							<a href="/charts">Diagramme</a><br/>
+							<a href="/datatables">Datentabelle</a> (aus Datenbank ausgelesen)<br/>
+							<a href="/notifications">Notifications</a><br/>
+							<a href="/validation">Validierung</a><br/>
+							<a href="/login">Login</a><br/>
+							</h5>
+						</div>
+						<div id="Chart3" class="ct-chart"></div>
+					</div>
+				</div>
+			</div>
+
+					<h3>Beispielbilder mit Text</h3>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card card-product">
+                                <div class="card-image" data-header-animation="true">
+                                    <a href="#pablo">
+                                        <img class="img" src="../../assets/img/card-2.jpg"/>
+                                    </a>
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-actions">
+                                        <button type="button" class="btn btn-danger btn-simple fix-broken-card">
+                                            <i class="material-icons">build</i> Fix Header!
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-simple" rel="tooltip" data-placement="bottom" title="View">
+                                            <i class="material-icons">art_track</i>
+                                        </button>
+                                        <button type="button" class="btn btn-success btn-simple" rel="tooltip" data-placement="bottom" title="Edit">
+                                            <i class="material-icons">edit</i>
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-simple" rel="tooltip" data-placement="bottom" title="Remove">
+                                            <i class="material-icons">close</i>
+                                        </button>
+                                    </div>
+                                    <h4 class="card-title">
+                                        <a href="#pablo">Cozy 5 Stars Apartment</a>
+                                    </h4>
+                                    <div class="card-description">
+                                        The place is close to Barceloneta Beach and bus stop just 2 min by walk and near to "Naviglio" where you can enjoy the main night life in Barcelona.
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="price">
+                                        <h4>$899/night</h4>
+                                    </div>
+                                    <div class="stats pull-right">
+                                        <p class="category"><i class="material-icons">place</i> Barcelona, Spain</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card card-product">
+                                <div class="card-image" data-header-animation="true">
+                                    <a href="#pablo">
+                                        <img class="img" src="../../assets/img/card-3.jpg"/>
+                                    </a>
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-actions">
+                                        <button type="button" class="btn btn-danger btn-simple fix-broken-card">
+                                            <i class="material-icons">build</i> Fix Header!
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-simple" rel="tooltip" data-placement="bottom" title="View">
+                                            <i class="material-icons">art_track</i>
+                                        </button>
+                                        <button type="button" class="btn btn-success btn-simple" rel="tooltip" data-placement="bottom" title="Edit">
+                                            <i class="material-icons">edit</i>
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-simple" rel="tooltip" data-placement="bottom" title="Remove">
+                                            <i class="material-icons">close</i>
+                                        </button>
+                                    </div>
+                                    <h4 class="card-title">
+                                        <a href="#pablo">Office Studio</a>
+                                    </h4>
+                                    <div class="card-description">
+                                        The place is close to Metro Station and bus stop just 2 min by walk and near to "Naviglio" where you can enjoy the night life in London, UK.
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="price">
+                                        <h4>$1.119/night</h4>
+                                    </div>
+                                    <div class="stats pull-right">
+                                        <p class="category"><i class="material-icons">place</i> London, UK</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card card-product">
+                                <div class="card-image" data-header-animation="true">
+                                    <a href="#pablo">
+                                        <img class="img" src="../../assets/img/card-1.jpg"/>
+                                    </a>
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-actions">
+                                        <button type="button" class="btn btn-danger btn-simple fix-broken-card">
+                                            <i class="material-icons">build</i> Fix Header!
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-simple" rel="tooltip" data-placement="bottom" title="View">
+                                            <i class="material-icons">art_track</i>
+                                        </button>
+                                        <button type="button" class="btn btn-success btn-simple" rel="tooltip" data-placement="bottom" title="Edit">
+                                            <i class="material-icons">edit</i>
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-simple" rel="tooltip" data-placement="bottom" title="Remove">
+                                            <i class="material-icons">close</i>
+                                        </button>
+                                    </div>
+                                    <h4 class="card-title">
+                                        <a href="#pablo">Beautiful Castle</a>
+                                    </h4>
+                                    <div class="card-description">
+                                        The place is close to Metro Station and bus stop just 2 min by walk and near to "Naviglio" where you can enjoy the main night life in Milan.
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="price">
+                                        <h4>$459/night</h4>
+                                    </div>
+                                    <div class="stats pull-right">
+                                        <p class="category"><i class="material-icons">place</i> Milan, Italy</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+
+
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card">
+						<div class="card-header card-header-icon"
+							data-background-color="devkGreen">
+							<i class="material-icons">copyright</i>
+						</div>
+						<div class="card-content">
+							<h4 class="card-title">
+								Kurz <small> - schade</small>
+							</h4>
+							<h5 class="card-title" style="text-align:center">
+							Die restlichen Seiten sind leider noch nicht befüllt! Sie dienen ausschließlich der Übersicht wie eine Navigationsleiste aussehen könnte!
+							<br/><br/>
+							Vielen Dank, dass Sie hier reingesehen haben!
+							</h5>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+	</div>
+</body>
+</html>
