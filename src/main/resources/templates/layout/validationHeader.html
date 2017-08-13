@@ -46,10 +46,10 @@
 							<p>Dashboard</p>
 						</a>
 					</li>
-                    <li sec:authorize="hasRole('ROLE_ARBEITER') or hasRole('ROLE_ADMIN')" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/charts') ? 'active':''}">
-                    	<a href="/charts">
-							<i class="material-icons">timeline</i>
-							<p>Diagramme</p>
+                    <li sec:authorize="hasRole('ROLE_ARBEITER') or hasRole('ROLE_ADMIN')" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/bepacken') ? 'active':''}">
+                    	<a href="/bepacken">
+							<i class="material-icons">card_giftcard</i>
+							<p>Bepacken</p>
 						</a>
 					</li>
 				</ul>

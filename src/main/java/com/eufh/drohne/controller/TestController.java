@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.eufh.drohne.business.service.TestService;
-import com.eufh.drohne.domain.Person;
+import com.eufh.drohne.domain.Drohne;
 
 @Controller
 public class TestController {
@@ -83,15 +83,15 @@ public class TestController {
 		return "validation";
 	}
 
-	@RequestMapping("/datatables")
+	@RequestMapping("/bepacken")
 	String datatablesNet(Model model) {
 		// Setzt den Namen der Seite auf der validationHeader.html
-		model.addAttribute("pageName", "Datatables.net");
+		model.addAttribute("pageName", "Bepacken");
 
-		ArrayList<Person> persons = new ArrayList<Person>();
+		ArrayList<Drohne> persons = new ArrayList<Drohne>();
 		persons = testService.findAll();
 		model.addAttribute("list", persons);
-		return "datatables";
+		return "bepacken";
 	}
 
 	@RequestMapping("/charts")

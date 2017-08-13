@@ -5,16 +5,16 @@ import java.util.ArrayList;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.eufh.drohne.domain.Person;
+import com.eufh.drohne.domain.Drohne;
 
 public interface TestService {
 
-	Person findOne(String id);
+	Drohne findOne(String id);
 
-	ArrayList<Person> findAll();
+	ArrayList<Drohne> findAll();
 
-	Page<Person> findAll(Pageable pageable);
+	Page<Drohne> findAll(Pageable pageable);
 
-	Person findByPers(String pers);
+	Drohne findByPers(String pers);
 
 }

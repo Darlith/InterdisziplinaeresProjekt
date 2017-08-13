@@ -8,17 +8,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Component;
 
-import com.eufh.drohne.domain.Person;
+import com.eufh.drohne.domain.Drohne;
 
 @Component
-public interface TestRepository extends PagingAndSortingRepository<Person, String> {
+public interface TestRepository extends PagingAndSortingRepository<Drohne, String> {
 
-	Person findOne(String id);
+	Drohne findOne(String id);
 
-	ArrayList<Person> findAll();
+	ArrayList<Drohne> findAll();
 
-	Page<Person> findAll(Pageable pageable);
+	Page<Drohne> findAll(Pageable pageable);
 
-	@Query("Select x from Person as x where x.personalnummer = ?")
-	Person findByPers(String pers);
+	@Query("Select x from Drohne as x where x.id = ?")
+	Drohne findByPers(String pers);
 }

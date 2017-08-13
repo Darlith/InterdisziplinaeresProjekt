@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.eufh.drohne.business.service.TestService;
-import com.eufh.drohne.domain.Person;
+import com.eufh.drohne.domain.Drohne;
 import com.eufh.drohne.repository.TestRepository;
 
 public class TestServiceImpl implements TestService {
@@ -18,24 +18,24 @@ public class TestServiceImpl implements TestService {
 	}
 
 	@Override
-	public ArrayList<Person> findAll() {
+	public ArrayList<Drohne> findAll() {
 		return testRepository.findAll();
 	}
 
 	@Override
-	public Person findOne(String id) {
+	public Drohne findOne(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Page<Person> findAll(Pageable pageable) {
+	public Page<Drohne> findAll(Pageable pageable) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Person findByPers(String pers) {
+	public Drohne findByPers(String pers) {
 		return testRepository.findByPers(pers);
 	}
 }
