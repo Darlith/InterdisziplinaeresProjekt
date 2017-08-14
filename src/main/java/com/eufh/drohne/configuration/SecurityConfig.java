@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers("/assets/**").permitAll()//.anyRequest().permitAll()//
 				// Rechtesystem der Rollen
 				.antMatchers("/dashboard").access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-				.antMatchers("/charts").access("hasRole('ROLE_ARBEITER') or hasRole('ROLE_ADMIN')")
+				.antMatchers("/bepacken").access("hasRole('ROLE_ARBEITER') or hasRole('ROLE_ADMIN')")
 				.anyRequest().authenticated().and() // den Rest authorisieren
 				.formLogin().usernameParameter("arbeitsanteil").passwordParameter("passwort")//
 				// Authentifizierung gegen persoenliche login-Page

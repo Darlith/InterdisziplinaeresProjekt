@@ -16,5 +16,7 @@ public interface TestService {
 	Page<Drohne> findAll(Pageable pageable);
 
 	Drohne findByPers(String pers);
+	
+	Drohne save(Drohne drohne);
 
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.eufh.drohne.business.service.TestService;
 import com.eufh.drohne.domain.Drohne;
@@ -37,5 +38,11 @@ public class TestServiceImpl implements TestService {
 	@Override
 	public Drohne findByPers(String pers) {
 		return testRepository.findByPers(pers);
+	}
+
+	@Override
+	@Transactional
+	public Drohne save(Drohne drohne) {
+		return testRepository.save(drohne);
 	}
 }

@@ -18,7 +18,9 @@ public interface TestRepository extends PagingAndSortingRepository<Drohne, Strin
 	ArrayList<Drohne> findAll();
 
 	Page<Drohne> findAll(Pageable pageable);
+	
+	Drohne save(Drohne drohne);
 
-	@Query("Select x from Drohne as x where x.id = ?")
+	@Query("Select x from Drohne as x where x.id = pers") //eigentlich ? anstatt pers
 	Drohne findByPers(String pers);
 }

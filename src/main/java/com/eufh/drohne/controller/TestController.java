@@ -87,10 +87,14 @@ public class TestController {
 	String datatablesNet(Model model) {
 		// Setzt den Namen der Seite auf der validationHeader.html
 		model.addAttribute("pageName", "Bepacken");
+//		Drohne drohne = new Drohne(1, "Kingston", "3");
+//		Drohne drohne2 = new Drohne(2, "Budapest", "1");
+//		testService.save(drohne);
+//		testService.save(drohne2);
 
-		ArrayList<Drohne> persons = new ArrayList<Drohne>();
-		persons = testService.findAll();
-		model.addAttribute("list", persons);
+		ArrayList<Drohne> drohnen = new ArrayList<Drohne>();
+		drohnen = testService.findAll();
+		model.addAttribute("list", drohnen);
 		return "bepacken";
 	}
 

@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "DEVICES")
+@Table(name = "DROHNE")
 public class Drohne {
 
 	@Id
@@ -18,6 +18,16 @@ public class Drohne {
 	private String lieferort;
 	@Column(name = "GEWICHT")
 	private String gewicht;
+	
+	public Drohne() {
+		
+	}
+	
+	public Drohne(int id, String lieferort, String gewicht){
+		this.id = id;
+		this.lieferort = lieferort;
+		this.gewicht = gewicht;
+	}
 	
 	public int getId() {
 		return id;
