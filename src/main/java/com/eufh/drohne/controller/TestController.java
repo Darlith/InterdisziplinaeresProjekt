@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.eufh.drohne.business.service.TestService;
+import com.eufh.drohne.business.service.impl.TestServiceImpl;
 import com.eufh.drohne.domain.Drohne;
 
 @Controller
@@ -91,6 +92,8 @@ public class TestController {
 //		Drohne drohne2 = new Drohne(2, "Budapest", "1");
 //		testService.save(drohne);
 //		testService.save(drohne2);
+		TestServiceImpl test = new TestServiceImpl(null);
+		test.startDroneSimulation();
 
 		ArrayList<Drohne> drohnen = new ArrayList<Drohne>();
 		drohnen = testService.findAll();
