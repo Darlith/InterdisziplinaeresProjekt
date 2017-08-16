@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+import com.eufh.drohne.security.CustomAccessDeniedHandler;
 import com.eufh.drohne.security.Securityhandler;
 
 @Configuration
@@ -18,6 +19,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	Securityhandler successHandler;
+	
+	@Autowired
+	CustomAccessDeniedHandler accessDeniedHandler;
 	
 	@Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -39,7 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()//
 				.logout()//
 				// Logout Weiterleitung
-				.logoutUrl("/logout").permitAll(); // POST only
+				.logoutUrl("/logout").permitAll()
+				.and().exceptionHandling().accessDeniedHandler(accessDeniedHandler);; // POST only
 				
 	}
 }
