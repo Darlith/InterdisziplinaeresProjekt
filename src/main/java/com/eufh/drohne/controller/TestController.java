@@ -50,10 +50,8 @@ public class TestController {
 		// Setzt den Namen der Seite auf der validationHeader.html
 		model.addAttribute("pageName", "Bepacken");
 		TestServiceImpl test = new TestServiceImpl(null);
-		test.startDroneSimulation();
 
-		ArrayList<Drohne> drohnen = new ArrayList<Drohne>();
-		drohnen = testService.findAll();
+		ArrayList<Drohne> drohnen = testService.findAll();
 		model.addAttribute("list", drohnen);
 		return "bepacken";
 	}
