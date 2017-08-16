@@ -49,7 +49,6 @@ public class TestController {
 	String datatablesNet(Model model) {
 		// Setzt den Namen der Seite auf der validationHeader.html
 		model.addAttribute("pageName", "Bepacken");
-		TestServiceImpl test = new TestServiceImpl(null);
 
 		ArrayList<Drohne> drohnen = testService.findAll();
 		model.addAttribute("list", drohnen);
@@ -67,6 +66,9 @@ public class TestController {
 	String dashboard(Model model) {
 		// Setzt den Namen der Seite auf der validationHeader.html
 		model.addAttribute("pageName", "Dashboard");
+		
+		ArrayList<Drohne> drohnen = testService.findAll();
+		model.addAttribute("list", drohnen);
 		return "dashboard";
 	}
 
@@ -90,7 +92,7 @@ public class TestController {
 		model.addAttribute("pageName", "Page not found");
 		return "error/404";
 	}
-
+	
 	@RequestMapping("/")
 	String start() {
 		return "redirect:dashboard";
