@@ -2,6 +2,7 @@ package com.eufh.drohne.business.service.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -69,23 +70,25 @@ public class TestServiceImpl implements TestService {
 		String [] input = new String[] { "20.01.2017, 08:00, Strete, 2.1", "20.01.2017, 08:01, Thurlestone, 1.2",
 				"20.01.2017, 08:02, Beesands, 0.7", "20.01.2017, 08:02, West Charleton, 3.9",
 				"20.01.2017, 08:05, Kingsbridge, 2.7" };
+		order = new String[input.length][4];
 		for(int i = 0; i < input.length; i++) {
-			order[i] = input[i].split(";");
+			order[i] = input[i].split(",");
 		}
 		
-		drones = new Drohne[5];
-		activeDroneId = 0;
-		NewDrone();
 		
-		setSimTime();
-		nextOrder = 0;
 		currentAddresses = new ArrayList<String>();
+		nextOrder = 0;
+		activeDroneId = 0;
+		drones = new Drohne[] {new Drohne(), new Drohne(), new Drohne(), new Drohne(), new Drohne()};
+		SetNextDroneActive();
+		setSimTime();
+		
 		
 		Simulate();
 		
 	}
-	
-	private void NewDrone() {
+
+	private void SetNextDroneActive() {
 		activeDrone = drones[0];
 		activeDroneId++;
 		activeDrone.resetDrone();
@@ -94,9 +97,9 @@ public class TestServiceImpl implements TestService {
 	}
 
 	private void setSimTime() {
-		String[] date = order[0][0].split(".");
-		String[] time = order[0][1].split(":");
-		simTime.set(Integer.parseInt(date[2]), Integer.parseInt(date[1]), Integer.parseInt(date[0]),
+		String[] date = order[0][0].trim().split("\\.");
+		String[] time = order[0][1].trim().split(":");
+		simTime = new GregorianCalendar(Integer.parseInt(date[2]), Integer.parseInt(date[1]), Integer.parseInt(date[0]),
 				Integer.parseInt(time[0]), Integer.parseInt(time[1]));
 		simTime.add(Calendar.MINUTE, -1);
 		
@@ -113,8 +116,8 @@ public class TestServiceImpl implements TestService {
 	}
 	
 	private void AddOrder() {
-		String[] date = order[nextOrder][0].split(".");
-		String[] time = order[nextOrder][1].split(":");
+		String[] date = order[nextOrder][0].trim().split("\\.");
+		String[] time = order[nextOrder][1].trim().split(":");
 		if(simTime.get(Calendar.YEAR) == Integer.parseInt(date[2]) 
 				&& simTime.get(Calendar.MONTH) == Integer.parseInt(date[1])
 				&& simTime.get(Calendar.DAY_OF_MONTH) == Integer.parseInt(date[0])
@@ -123,14 +126,14 @@ public class TestServiceImpl implements TestService {
 		{
 			if((Double.parseDouble(order[nextOrder][3])) > 4.0)
 			{
-				//Paket ist schwerer als erlaubt, Error display
+				//TODO: Paket ist schwerer als erlaubt, Error display
 			}
 			if((activeDrone.getTotalPackageWeight() + (Double.parseDouble(order[nextOrder][3])) <= 4.0))
 			{
 				calcDroneRoutes(order[nextOrder][2]);
 				
 			}
-			// else Starte aktive Drohne und füge aktuelles Paket zu neuer Drohne hinzu
+			// TODO: else Starte aktive Drohne und füge aktuelles Paket zu neuer Drohne hinzu
 			else
 			{
 				StartActiveDrone();
@@ -161,8 +164,9 @@ public class TestServiceImpl implements TestService {
 		//TODO: Get known LatLngs from DB
 		geoContext = new GeoApiContext.Builder().apiKey("AIzaSyDMPJ3sP0kzCvOtV2PPxUfgL0axoQff-mM").build();
 		try {
-			for (String loc : currentAddresses)
-				locLatLngs.add(getLatLng(loc));
+			//TODO: Initialize mit 0, sobald die bekannten LatLngs in der DB sind
+			for (int i = 1; i < currentAddresses.size(); i++)
+				locLatLngs.add(getLatLng(currentAddresses.get(i)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -172,17 +176,14 @@ public class TestServiceImpl implements TestService {
 			{
 				for (int j = i + 1; j < locLatLngs.size(); j++) 
 				{
-					if (i != j) 
-					{
-						double distance = Haversine.getDistance(locLatLngs.get(i).lat,locLatLngs.get(i).lng,
-								locLatLngs.get(j).lat, locLatLngs.get(j).lng);
-						//CODE FOR TESTING
-						int distanceKm = (int) distance;
-						int distanceMeters = (int) ((distance - (double) distanceKm) * 1000);
-						System.out.println("Distance from " + currentAddresses.get(i) + " to " + currentAddresses.get(j) + " : "
-								+ distanceKm + "km " + distanceMeters + "m");
-						//CODE FOR TESTING
-					}
+					double distance = Haversine.getDistance(locLatLngs.get(i).lat,locLatLngs.get(i).lng,
+							locLatLngs.get(j).lat, locLatLngs.get(j).lng);
+					//CODE FOR TESTING
+					int distanceKm = (int) distance;
+					int distanceMeters = (int) ((distance - (double) distanceKm) * 1000);
+					System.out.println("Distance from " + currentAddresses.get(i) + " to " + currentAddresses.get(j) + " : "
+							+ distanceKm + "km " + distanceMeters + "m");
+					//CODE FOR TESTING
 				}
 			}
 		}
@@ -191,9 +192,7 @@ public class TestServiceImpl implements TestService {
 	private LatLng getLatLng(String address) throws Exception {
 		GeocodingResult[] results =  GeocodingApi.geocode(geoContext,
 		    address + ",England").await();
-		return results[0].geometry.location;
-		
-		
+		return results[0].geometry.location;	
 	}
 }
 
