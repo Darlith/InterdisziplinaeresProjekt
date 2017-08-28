@@ -5,18 +5,18 @@ import java.util.ArrayList;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.eufh.drohne.domain.Drohne;
+import com.eufh.drohne.domain.Order;
 
 public interface TestService {
 
-	Drohne findOne(String id);
+	Order findOne(String id);
 
-	ArrayList<Drohne> findAll();
+	ArrayList<Order> findAll();
 
-	Page<Drohne> findAll(Pageable pageable);
-
-	Drohne findByPers(String pers);
+	Page<Order> findAll(Pageable pageable);
 	
-	Drohne save(Drohne drohne);
+	Order save(Order order);
+
+	//void saveCoordinates(Coordinates coordinates);
 
 }

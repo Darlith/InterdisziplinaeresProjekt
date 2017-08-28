@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.eufh.drohne.business.service.TestService;
 import com.eufh.drohne.domain.Drohne;
+import com.eufh.drohne.domain.Coordinates;
+import com.eufh.drohne.domain.Order;
 import com.eufh.drohne.repository.TestRepository;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
@@ -21,10 +23,10 @@ public class TestServiceImpl implements TestService {
 	
 	GeoApiContext geoContext;
 	Calendar simTime;
-	String[][] order;
+	Order[] order;
+	List<Coordinates> locCoords;
 	int nextOrder;
 	Drohne[] drones;
-	int activeDroneId;
 	Drohne activeDrone;
 	List<String> currentAddresses;
 
@@ -35,32 +37,33 @@ public class TestServiceImpl implements TestService {
 	}
 
 	@Override
-	public ArrayList<Drohne> findAll() {
+	public ArrayList<Order> findAll() {
 		return testRepository.findAll();
 	}
 
 	@Override
-	public Drohne findOne(String id) {
+	public Order findOne(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Page<Drohne> findAll(Pageable pageable) {
+	public Page<Order> findAll(Pageable pageable) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public Drohne findByPers(String pers) {
-		return testRepository.findByPers(pers);
 	}
 
 	@Override
 	@Transactional
-	public Drohne save(Drohne drohne) {
-		return testRepository.save(drohne);
+	public Order save(Order order) {
+		return testRepository.save(order);
 	}
+	
+	/*@Override
+	@Transactional
+	public void saveCoordinates(Coordinates coordinates) {
+		testRepository.saveCoordinates(coordinates);
+	}*/
 
 	/*
 	 * Entry point for the drone simulation
@@ -70,15 +73,16 @@ public class TestServiceImpl implements TestService {
 		String [] input = new String[] { "20.01.2017, 08:00, Strete, 2.1", "20.01.2017, 08:01, Thurlestone, 1.2",
 				"20.01.2017, 08:02, Beesands, 0.7", "20.01.2017, 08:02, West Charleton, 3.9",
 				"20.01.2017, 08:05, Kingsbridge, 2.7" };
-		order = new String[input.length][4];
+		order = new Order[input.length];
+		CreateOrderByList(input);
+		/*order = new String[input.length][4];
 		for(int i = 0; i < input.length; i++) {
 			order[i] = input[i].split(",");
-		}
+		}*/
 		
-		
+		locCoords = new ArrayList<Coordinates>();
 		currentAddresses = new ArrayList<String>();
 		nextOrder = 0;
-		activeDroneId = 0;
 		drones = new Drohne[] {new Drohne(), new Drohne(), new Drohne(), new Drohne(), new Drohne()};
 		SetNextDroneActive();
 		setSimTime();
@@ -88,21 +92,35 @@ public class TestServiceImpl implements TestService {
 		
 	}
 
+	private void CreateOrderByList(String[] input) { 
+		for(int i = 0; i < input.length; i++) {
+			String[] orderArr = input[i].split(",");
+			String[] date = orderArr[0].trim().split("\\.");
+			String[] time = orderArr[1].trim().split(":");
+			Calendar orderDate = new GregorianCalendar(Integer.parseInt(date[2]), Integer.parseInt(date[1]), 
+					Integer.parseInt(date[0]), Integer.parseInt(time[0]), Integer.parseInt(time[1]));
+			double weight = Double.parseDouble(orderArr[3].trim());
+			order[i] = new Order(orderDate, orderArr[2].trim(), weight);
+		}
+	}
+
 	private void SetNextDroneActive() {
-		activeDrone = drones[0];
-		activeDroneId++;
+		if (activeDrone == null || activeDrone.getId() == 5)
+		{
+			activeDrone = drones[0];
+		}
+		else
+		{
+			activeDrone = drones[activeDrone.getId()];
+		}
 		activeDrone.resetDrone();
 		currentAddresses.clear();
 		currentAddresses.add("Salcombe");
 	}
 
 	private void setSimTime() {
-		String[] date = order[0][0].trim().split("\\.");
-		String[] time = order[0][1].trim().split(":");
-		simTime = new GregorianCalendar(Integer.parseInt(date[2]), Integer.parseInt(date[1]), Integer.parseInt(date[0]),
-				Integer.parseInt(time[0]), Integer.parseInt(time[1]));
+		simTime = order[0].getOrderDate();
 		simTime.add(Calendar.MINUTE, -1);
-		
 	}
 
 	private void Simulate() {
@@ -116,29 +134,23 @@ public class TestServiceImpl implements TestService {
 	}
 	
 	private void AddOrder() {
-		String[] date = order[nextOrder][0].trim().split("\\.");
-		String[] time = order[nextOrder][1].trim().split(":");
-		if(simTime.get(Calendar.YEAR) == Integer.parseInt(date[2]) 
-				&& simTime.get(Calendar.MONTH) == Integer.parseInt(date[1])
-				&& simTime.get(Calendar.DAY_OF_MONTH) == Integer.parseInt(date[0])
-				&& simTime.get(Calendar.HOUR_OF_DAY) == Integer.parseInt(time[0])
-				&& simTime.get(Calendar.MINUTE) == Integer.parseInt(time[1])) 
+		if(simTime.equals(order[nextOrder].getOrderDate())) 
 		{
-			if((Double.parseDouble(order[nextOrder][3])) > 4.0)
+			if(order[nextOrder].getWeight() > 4.0)
 			{
 				//TODO: Paket ist schwerer als erlaubt, Error display
 			}
-			if((activeDrone.getTotalPackageWeight() + (Double.parseDouble(order[nextOrder][3])) <= 4.0))
+			if((activeDrone.getTotalPackageWeight() + order[nextOrder].getWeight()) <= 4.0)
 			{
-				calcDroneRoutes(order[nextOrder][2]);
+				calcDroneRoutes(order[nextOrder].getLocation());
 				
 			}
 			// TODO: else Starte aktive Drohne und füge aktuelles Paket zu neuer Drohne hinzu
 			else
 			{
 				StartActiveDrone();
-				calcDroneRoutes(order[nextOrder][2]);
-				activeDrone.addPackage(Double.parseDouble(order[nextOrder][3]));
+				calcDroneRoutes(order[nextOrder].getLocation());
+				activeDrone.addPackage(order[nextOrder].getWeight());
 			}
 			
 			nextOrder++;
@@ -159,29 +171,32 @@ public class TestServiceImpl implements TestService {
 	//TODO PHKO: Weiterentwickeln, Schnittstelle zum Frontend und Datenbank bilden
 	private void calcDroneRoutes (String address) {
 		currentAddresses.add(address);
-		List<LatLng> locLatLngs = new ArrayList<LatLng>();
-		locLatLngs.add(new LatLng(50.2375800, -3.7697910)); //LatLng for Salcombe
+		List<Coordinates> locCoords = new ArrayList<Coordinates>();
+		locCoords.add(new Coordinates(currentAddresses.get(0), 50.2375800, -3.7697910)); //Salcombe
 		//TODO: Get known LatLngs from DB
 		geoContext = new GeoApiContext.Builder().apiKey("AIzaSyDMPJ3sP0kzCvOtV2PPxUfgL0axoQff-mM").build();
 		try {
 			//TODO: Initialize mit 0, sobald die bekannten LatLngs in der DB sind
 			for (int i = 1; i < currentAddresses.size(); i++)
-				locLatLngs.add(getLatLng(currentAddresses.get(i)));
+			{
+				LatLng latLng = getLatLng(currentAddresses.get(i));
+				locCoords.add(new Coordinates(currentAddresses.get(i), latLng.lat, latLng.lng));	
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		finally 
 		{
-			for (int i = 0; i < locLatLngs.size(); i++) 
+			for (int i = 0; i < locCoords.size(); i++) 
 			{
-				for (int j = i + 1; j < locLatLngs.size(); j++) 
+				for (int j = i + 1; j < locCoords.size(); j++) 
 				{
-					double distance = Haversine.getDistance(locLatLngs.get(i).lat,locLatLngs.get(i).lng,
-							locLatLngs.get(j).lat, locLatLngs.get(j).lng);
+					double distance = Haversine.getDistance(locCoords.get(i).getLatitude(),locCoords.get(i).getLongitude(),
+							locCoords.get(j).getLatitude(), locCoords.get(j).getLongitude());
 					//CODE FOR TESTING
 					int distanceKm = (int) distance;
 					int distanceMeters = (int) ((distance - (double) distanceKm) * 1000);
-					System.out.println("Distance from " + currentAddresses.get(i) + " to " + currentAddresses.get(j) + " : "
+					System.out.println("Distance from " + locCoords.get(i).getLocation() + " to " + locCoords.get(j).getLocation() + " : "
 							+ distanceKm + "km " + distanceMeters + "m");
 					//CODE FOR TESTING
 				}

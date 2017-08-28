@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.eufh.drohne.business.service.TestService;
 import com.eufh.drohne.business.service.impl.TestServiceImpl;
-import com.eufh.drohne.domain.Drohne;
+import com.eufh.drohne.domain.Order;
 
 @Controller
 public class TestController {
@@ -49,9 +49,12 @@ public class TestController {
 	String datatablesNet(Model model) {
 		// Setzt den Namen der Seite auf der validationHeader.html
 		model.addAttribute("pageName", "Bepacken");
+		
+		TestServiceImpl demo = new TestServiceImpl(null);
+		demo.startDroneSimulation();
 
-		ArrayList<Drohne> drohnen = testService.findAll();
-		model.addAttribute("list", drohnen);
+		ArrayList<Order> orders = testService.findAll();
+		model.addAttribute("list", orders);
 		return "bepacken";
 	}
 
@@ -67,8 +70,8 @@ public class TestController {
 		// Setzt den Namen der Seite auf der validationHeader.html
 		model.addAttribute("pageName", "Dashboard");
 		
-		ArrayList<Drohne> drohnen = testService.findAll();
-		model.addAttribute("list", drohnen);
+		ArrayList<Order> orders = testService.findAll();
+		model.addAttribute("list", orders);
 		return "dashboard";
 	}
 
