@@ -1,10 +1,14 @@
 package com.eufh.drohne.controller;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -52,9 +56,9 @@ public class TestController {
 		
 		TestServiceImpl demo = new TestServiceImpl(null);
 		demo.startDroneSimulation();
-
-		//ArrayList<Order> orders = testService.findAll();
-		//model.addAttribute("list", orders);
+		
+		ArrayList<Order> orders = testService.findAll();
+		model.addAttribute("list", orders);
 		return "bepacken";
 	}
 

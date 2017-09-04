@@ -1,5 +1,6 @@
 package com.eufh.drohne.domain;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public class Drohne {
 	private double totalPackageWeight; //kg
 	private int packageCount;
 	private double totalDistance; //km
-	private List<Order> orders;
+	private List<Order> orders = new ArrayList<Order>();
 	private final int speed = 60; // kmh
 	
 	public Drohne() {
@@ -83,8 +84,8 @@ public class Drohne {
 	{
 		//return an Frontend
 		//TEST CODE
-		System.out.println("Drohne gestartet mit" + this.packageCount + "Paketen mit" + this.totalPackageWeight
-				+ "Kilo auf einer Strecke von" + this.totalDistance + "\\. Es werden folgende Orte beliefert: ");
+		System.out.println("Drohne gestartet mit" + this.packageCount + "Paketen mit " + this.totalPackageWeight
+				+ "Kilo auf einer Strecke von " + this.totalDistance + "\\. Es werden folgende Orte beliefert: ");
 		this.resetDrone();
 	}
 }

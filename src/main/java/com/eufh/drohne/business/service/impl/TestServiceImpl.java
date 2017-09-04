@@ -1,5 +1,6 @@
 package com.eufh.drohne.business.service.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,12 +59,12 @@ public class TestServiceImpl implements TestService {
 		return testRepository.save(order);
 	}
 	
-	/*@Override
+	@Override
 	@Transactional
-	public void saveCoordinates(Coordinates coordinates) {
-		testRepository.saveCoordinates(coordinates);
-	}*/
-
+	public Coordinates save(Coordinates coordinates) {
+		return testRepository.save(coordinates);
+	}
+	
 	/*
 	 * Entry point for the drone simulation
 	 */
@@ -83,7 +84,6 @@ public class TestServiceImpl implements TestService {
 		
 		
 		Simulate();
-		
 	}
 
 	private void CreateOrderByList(String[] input) { 
@@ -143,7 +143,7 @@ public class TestServiceImpl implements TestService {
 				
 				
 			}
-			// TODO: else Starte aktive Drohne und füge aktuelles Paket zu neuer Drohne hinzu
+			// TODO: else Starte aktive Drohne und fï¿½ge aktuelles Paket zu neuer Drohne hinzu
 			else
 			{
 				activeDrone.start(simTime);
@@ -152,8 +152,8 @@ public class TestServiceImpl implements TestService {
 				calcDroneRoutes();
 			}
 			
-			nextOrder++;
 		}
+		nextOrder++;
 	}
 
 	private void CheckMaximumTime() {
@@ -220,7 +220,7 @@ public class TestServiceImpl implements TestService {
 				//CODE FOR TESTING
 			}
 		}
-		//Beste Route auswählen
+		//Beste Route auswï¿½hlen
 		double bestDistance = Double.MAX_VALUE;
 		DateTime bestTime = new DateTime();
 		List<Route> bestRoute = new ArrayList<Route>();
@@ -357,7 +357,7 @@ public class TestServiceImpl implements TestService {
 				bestTime.plusSeconds((int)(distance * 60));
 			}
 		}
-		//Route umkehren, falls Termine nicht eingehalten werden können
+		//Route umkehren, falls Termine nicht eingehalten werden kï¿½nnen
 		if(!isRouteValid(bestRoute))
 		{
 			List<Route> tempRoute = bestRoute;
@@ -374,7 +374,7 @@ public class TestServiceImpl implements TestService {
 			}
 			bestRoute = tempRoute;
 		}
-		//TODO Werte festhalten für Validierungen
+		//TODO Werte festhalten fï¿½r Validierungen
 		if (bestDistance > 50.0  || !isRouteValid(bestRoute))
 		{
 			return false;

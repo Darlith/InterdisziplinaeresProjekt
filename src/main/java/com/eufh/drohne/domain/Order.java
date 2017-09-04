@@ -1,30 +1,35 @@
 package com.eufh.drohne.domain;
 
-import java.util.Calendar;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.joda.time.DateTime;
+
 
 @Entity
 @Table(name = "ORDERS")
 public class Order {
 	
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "ID")
 	private int id;
-	@Column(name = "OrderDate")
+	@Column(name = "ORDERDATE")
 	private DateTime orderDate;
-	@Column(name = "Location")
+	@Column(name = "LOCATION")
 	private String location;
-	@Column(name = "Weight")
+	@Column(name = "WEIGHT")
 	private double weight;
 
+	//Default Constructor
+	public Order()
+	{
+	}
+	
 	public Order(DateTime orderDate, String location, double weight)
 	{
 		this.orderDate = orderDate;
@@ -41,7 +46,7 @@ public class Order {
 	 */
 	public void setOrderDate(DateTime orderDate) {
 		this.orderDate = orderDate;
-		//Konvertierung für SQL Statement in sql.Date
+		//Konvertierung fï¿½r SQL Statement in sql.Date
 		//this.orderDate = new Date(cal.getTimeInMillis());
 	}
 	public String getLocation() {
