@@ -10,20 +10,12 @@ import javax.persistence.Table;
 @Table(name = "Coordinates")
 public class Coordinates {
 	
-	@Id
-	@GeneratedValue
-	@Column(name = "ID")
-	private int id;
 	@Column(name = "Location")
 	private String location;
 	@Column(name = "Latitude")
 	private double latitude;
 	@Column(name = "Longitude")
 	private double longitude;
-	
-	public int getId() {
-		return id;
-	}
 
 	public String getLocation() {
 		return location;
