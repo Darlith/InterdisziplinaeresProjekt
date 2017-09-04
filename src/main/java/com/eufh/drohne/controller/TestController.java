@@ -53,8 +53,8 @@ public class TestController {
 		TestServiceImpl demo = new TestServiceImpl(null);
 		demo.startDroneSimulation();
 
-		ArrayList<Order> orders = testService.findAll();
-		model.addAttribute("list", orders);
+		//ArrayList<Order> orders = testService.findAll();
+		//model.addAttribute("list", orders);
 		return "bepacken";
 	}
 
@@ -70,8 +70,8 @@ public class TestController {
 		// Setzt den Namen der Seite auf der validationHeader.html
 		model.addAttribute("pageName", "Dashboard");
 		
-		ArrayList<Order> orders = testService.findAll();
-		model.addAttribute("list", orders);
+		//ArrayList<Order> orders = testService.findAll();
+		//model.addAttribute("list", orders);
 		return "dashboard";
 	}
 
