@@ -37,6 +37,7 @@ public class Drohne {
 	 * @param weight Weight of the new package
 	 */
 	public void addPackage(Order order) {
+		order.setDrone(this);
 		this.orders.add(order);
 		this.packageCount++;
 		this.totalPackageWeight += order.getWeight();

@@ -1,5 +1,7 @@
 package com.eufh.drohne.domain;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +14,8 @@ import org.joda.time.DateTime;
 
 public class Order {
 	
+	private static final AtomicInteger ID_GENERATOR = new AtomicInteger(10000);
+	
 	private int id;
 	
 	private DateTime orderDate;
@@ -19,6 +23,8 @@ public class Order {
 	private String location;
 	
 	private double weight;
+	
+	private Drohne drone;
 
 	//Default Constructor
 	public Order()
@@ -27,6 +33,7 @@ public class Order {
 	
 	public Order(DateTime orderDate, String location, double weight)
 	{
+		this.id = ID_GENERATOR.getAndIncrement();
 		this.orderDate = orderDate;
 		this.location = location;
 		this.weight = weight;
@@ -59,4 +66,23 @@ public class Order {
 	public int getId() {
 		return id;
 	}
+	
+	public Order findOne(int id)
+	{
+		if(this.id == id)
+		{
+			return this;
+		}
+		return null;
+	}
+
+	public Drohne getDrone() {
+		return drone;
+	}
+
+	public void setDrone(Drohne drone) {
+		this.drone = drone;
+	}
+	
+	
 }

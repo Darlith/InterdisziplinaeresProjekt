@@ -162,7 +162,7 @@ public class TestServiceImpl implements TestService {
 		{
 			currentOrderLocations.add(new OrderLocation(order.getId(), order.getLocation()));
 		}
-		//TODO: Get known LatLngs from DB
+		
 		geoContext = new GeoApiContext.Builder().apiKey("AIzaSyDMPJ3sP0kzCvOtV2PPxUfgL0axoQff-mM").build();
 		try {
 			//TODO: Initialize mit 0, sobald die bekannten LatLngs in der DB sind
