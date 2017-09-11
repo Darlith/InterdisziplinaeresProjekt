@@ -11,17 +11,16 @@ import com.eufh.drohne.domain.Coordinates;
 import com.eufh.drohne.domain.Order;
 
 @Component
-public interface TestRepository extends PagingAndSortingRepository<Order, String> {
+public interface TestRepository extends PagingAndSortingRepository<Coordinates, String> {
 
-	Order findOne(String id);
+	Coordinates findOne(String id);
 
-	ArrayList<Order> findAll();
+	ArrayList<Coordinates> findAll();
 
-	Page<Order> findAll(Pageable pageable);
+	Page<Coordinates> findAll(Pageable pageable);
+	
 	
 	@SuppressWarnings("unchecked")
-	Order save(Order order);
-	
 	Coordinates save(Coordinates coordinates);
 	
 	//@Query("Select x from Drohne as x where x.id = pers") //eigentlich ? anstatt pers

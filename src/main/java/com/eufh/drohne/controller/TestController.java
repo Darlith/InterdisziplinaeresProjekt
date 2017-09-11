@@ -57,8 +57,8 @@ public class TestController {
 		TestServiceImpl demo = new TestServiceImpl(null);
 		demo.startDroneSimulation();
 		
-		ArrayList<Order> orders = testService.findAll();
-		model.addAttribute("list", orders);
+		//ArrayList<Order> orders = testService.findAll();
+		//model.addAttribute("list", orders);
 		return "bepacken";
 	}
 

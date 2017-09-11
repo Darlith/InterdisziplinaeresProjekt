@@ -10,19 +10,14 @@ import javax.persistence.Table;
 import org.joda.time.DateTime;
 
 
-@Entity
-@Table(name = "ORDERS")
 public class Order {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "ID")
 	private int id;
-	@Column(name = "ORDERDATE")
+	
 	private DateTime orderDate;
-	@Column(name = "LOCATION")
+	
 	private String location;
-	@Column(name = "WEIGHT")
+	
 	private double weight;
 
 	//Default Constructor

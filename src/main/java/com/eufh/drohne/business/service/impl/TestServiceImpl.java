@@ -36,25 +36,19 @@ public class TestServiceImpl implements TestService {
 	}
 
 	@Override
-	public ArrayList<Order> findAll() {
+	public ArrayList<Coordinates> findAll() {
 		return testRepository.findAll();
 	}
 
 	@Override
-	public Order findOne(String id) {
+	public Coordinates findOne(String id) {
 		return testRepository.findOne(id);
 	}
 
 	@Override
-	public Page<Order> findAll(Pageable pageable) {
+	public Page<Coordinates> findAll(Pageable pageable) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	@Transactional
-	public Order save(Order order) {
-		return testRepository.save(order);
 	}
 	
 	@Override
@@ -91,7 +85,6 @@ public class TestServiceImpl implements TestService {
 					Integer.parseInt(date[0]), Integer.parseInt(time[0]), Integer.parseInt(time[1]));
 			double weight = Double.parseDouble(orderArr[3].trim());
 			this.order[i] = new Order(orderDate, orderArr[2].trim(), weight);
-			this.save(order[i]);
 		}
 	}
 

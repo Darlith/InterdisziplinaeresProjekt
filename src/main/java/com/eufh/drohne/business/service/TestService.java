@@ -10,14 +10,12 @@ import com.eufh.drohne.domain.Order;
 
 public interface TestService {
 
-	Order findOne(String id);
+	Coordinates findOne(String id);
 
-	ArrayList<Order> findAll();
+	ArrayList<Coordinates> findAll();
 
-	Page<Order> findAll(Pageable pageable);
+	Page<Coordinates> findAll(Pageable pageable);
 	
-	Order save(Order order);
-
 	Coordinates save(Coordinates coordinates);
 
 	//void saveCoordinates(Coordinates coordinates);
