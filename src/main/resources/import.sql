@@ -10,4 +10,10 @@
 
 --INSERT INTO DROHNE (ID, LIEFERORT, GEWICHT) VALUES ( 1, 'Kingston', '3' ), ( 2, 'Budapest', '2' ), ( 3, 'Krefeld', '2.5' ), ( 4, 'Deutschland', '0.5' ), ( 5, 'Stadt', '4' );
 
+<<<<<<< HEAD
 --INSERT INTO ORDERS (LOCATION, WEIGHT) VALUES ( 'Stete', 4.0 ), ( 'Kingston', 2.1 );
+=======
+--INSERT INTO ORDERS (LOCATION, WEIGHT) VALUES ( 'Stete', 4.0 ), ( 'Kingston', 2.1 );
+
+INSERT INTO DRONE (GEWICHT, PAKETE, DISTANZ, GESCHWINDIGKEIT) VALUES ( 4.0, 2, 50.0, 60 ), ( 3.5, 3, 30.0, 60 );
+>>>>>>> branch 'master' of https://github.com/Darlith/InterdisziplinaeresProjekt

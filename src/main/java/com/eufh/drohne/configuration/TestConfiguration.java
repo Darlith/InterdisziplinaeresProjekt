@@ -14,23 +14,23 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 
+import com.eufh.drohne.business.service.DroneService;
 import com.eufh.drohne.business.service.TestService;
 import com.eufh.drohne.controller.TestController;
 
 @Configuration
-@EnableJpaRepositories("com.devk.tron.repository")
+@EnableJpaRepositories("com.eufh.drohne.repository")
 public class TestConfiguration {
 
 	@Autowired
 	private TestService testService;
+	
+	@Autowired
+	private DroneService droneService;
 
 	@Bean
 	public TestController testController() {
-		return new TestController(testService);
+		return new TestController(testService, droneService);
 	}
 	
-//	@ExceptionHandler(NoHandlerFoundException.class)
-//    public ModelAndView handleError404(HttpServletRequest request, Exception e)   {
-//        return new ModelAndView("404");
-//    }
 }

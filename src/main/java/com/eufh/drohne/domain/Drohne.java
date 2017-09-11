@@ -4,16 +4,33 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.joda.time.DateTime;
 
+@Entity
+@Table(name = "Drone")
 public class Drohne {
 
+	@Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
+	@Column(name = "gewicht")
 	private double totalPackageWeight; //kg
+	@Column(name = "pakete")
 	private int packageCount;
+	@Column(name = "distanz")
 	private double totalDistance; //km
+	@Transient
 	private List<Order> orders = new ArrayList<Order>();
-	private final int speed = 60; // kmh
+	@Column(name = "geschwindigkeit")
+	public int speed = 60; // kmh
 	
 	public Drohne() {
 		this.totalPackageWeight = 0.0;
