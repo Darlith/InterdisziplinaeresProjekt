@@ -30,9 +30,11 @@ public class TestServiceImpl implements TestService {
 	Drohne activeDrone;
 
 	private TestRepository testRepository;
-
-	public TestServiceImpl(TestRepository repo) {
+	private TestService testService;
+	
+	public TestServiceImpl(TestRepository repo, TestService testService) {
 		this.testRepository = repo;
+		this.testService = testService;
 	}
 
 	@Override
@@ -153,26 +155,47 @@ public class TestServiceImpl implements TestService {
 
 	//TODO PHKO: Weiterentwickeln, Schnittstelle zum Frontend und Datenbank bilden
 	private boolean calcDroneRoutes(Order currentOrder) {
+		List<OrderLocation> orderLocations = new ArrayList<OrderLocation>();
 		List<OrderLocation> currentOrderLocations = new ArrayList<OrderLocation>();
 		List<Route> routes = new ArrayList<Route>();
 		currentOrderLocations.add(new OrderLocation(0, "Salcombe", new LatLng(50.2375800, -3.7697910)));
 		List<Order> orders = activeDrone.getOrders();
+		List<OrderLocation> queryOrderLocations = new ArrayList<OrderLocation>();
 		orders.add(currentOrder);
 		for(Order order : orders)
 		{
-			currentOrderLocations.add(new OrderLocation(order.getId(), order.getLocation()));
+			orderLocations.add(new OrderLocation(order.getId(), order.getLocation()));
 		}
-		
-		geoContext = new GeoApiContext.Builder().apiKey("AIzaSyDMPJ3sP0kzCvOtV2PPxUfgL0axoQff-mM").build();
-		try {
-			//TODO: Initialize mit 0, sobald die bekannten LatLngs in der DB sind
-			for (int i = 1; i < currentOrderLocations.size(); i++)
+		for(OrderLocation ol : orderLocations)
+		{
+			Coordinates coordinates = testService.findOne(ol.getAddress());
+			if(coordinates != null)
 			{
-				LatLng latLng = getLatLng(currentOrderLocations.get(i).getAddress());
-				currentOrderLocations.get(i).setLatlng(latLng);	
+				ol.setLatlng(new LatLng(coordinates.getLatitude(), coordinates.getLongitude()));
+				currentOrderLocations.add(ol);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			else 
+			{
+				queryOrderLocations.add(ol);
+			}
+		}
+		if(!queryOrderLocations.isEmpty())
+		{
+			geoContext = new GeoApiContext.Builder().apiKey("AIzaSyDMPJ3sP0kzCvOtV2PPxUfgL0axoQff-mM").build();
+			try {
+				//TODO: Initialize mit 0, sobald die bekannten LatLngs in der DB sind
+				for (int i = 0; i < queryOrderLocations.size(); i++)
+				{
+					OrderLocation o = queryOrderLocations.get(i);
+					LatLng latLng = getLatLng(o.getAddress());
+					o.setLatlng(latLng);
+					currentOrderLocations.add(o);
+					Coordinates c = new Coordinates(o.getAddress(), o.getLatlng().lat, o.getLatlng().lng);
+					testService.save(c);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		for (int i = 0; i < currentOrderLocations.size(); i++) 
 		{
@@ -184,11 +207,25 @@ public class TestServiceImpl implements TestService {
 				DateTime destinationOrderDate = null;
 				if(currentOrderLocations.get(i).getAddress() != "Salcombe")
 				{			
-					this.findOne(Integer.toString(currentOrderLocations.get(i).getOrderID()));
+					for (Order o : orders)
+					{
+						Order searchOrder = o.findOne(currentOrderLocations.get(i).getOrderID());
+						if(searchOrder != null);
+						{
+							originOrderDate = searchOrder.getOrderDate();
+						}
+					}
 				}
 				if(currentOrderLocations.get(j).getAddress() != "Salcombe")
 				{
-					this.findOne(Integer.toString(currentOrderLocations.get(j).getOrderID()));
+					for (Order o : orders)
+					{
+						Order searchOrder = o.findOne(currentOrderLocations.get(j).getOrderID());
+						if(searchOrder != null);
+						{
+							destinationOrderDate = searchOrder.getOrderDate();
+						}
+					}
 				}
 				routes.add(new Route(currentOrderLocations.get(i), currentOrderLocations.get(j), destinationOrderDate , distance));
 				routes.add(new Route(currentOrderLocations.get(j), currentOrderLocations.get(i), originOrderDate , distance));
@@ -202,12 +239,16 @@ public class TestServiceImpl implements TestService {
 		}
 		//Beste Route ausw�hlen
 		double bestDistance = Double.MAX_VALUE;
-		DateTime bestTime = new DateTime();
+		Time bestTime = new Time();
 		List<Route> bestRoute = new ArrayList<Route>();
 		List<ArrayList<Route>> currentRoutes = new ArrayList<ArrayList<Route>>();
 		for(Order order : orders)
 		{
-			List<Route> tempRoutes = routes;
+			List<Route> tempRoutes = new ArrayList<Route>();
+			for (Route r : routes)
+			{
+				tempRoutes.add(r);
+			}
 			for(Route route: tempRoutes)
 			{
 				if(route.getOriginOrderLocation().getAddress() == "Salcombe" 
@@ -236,11 +277,19 @@ public class TestServiceImpl implements TestService {
 			}
 			else
 			{
-				List<Order> tempOrders = orders;
+				List<Order> tempOrders = new ArrayList<Order>();
+				for (Order o : orders)
+				{
+					tempOrders.add(o);
+				}
 				tempOrders.remove(order);
 				for(int i = 0; i < tempOrders.size(); i++)
 				{
-					List<Route> temptempRoutes = tempRoutes;
+					List<Route> temptempRoutes = new ArrayList<Route>();
+					for (Route r : tempRoutes)
+					{
+						temptempRoutes.add(r);
+					}
 					for (Route route : temptempRoutes)
 					{
 						if(route.getOriginOrderLocation().getAddress() == order.getLocation() 
@@ -265,11 +314,19 @@ public class TestServiceImpl implements TestService {
 					}
 					else
 					{
-						List<Order> temptempOrders = tempOrders;
+						List<Order> temptempOrders = new ArrayList<Order>();
+						for (Order o : tempOrders)
+						{
+							temptempOrders.add(o);
+						}
 						temptempOrders.remove(tempOrders.get(i));
 						for(Order temptempOrder : temptempOrders)
 						{
-							List<Route> temp3Routes = temptempRoutes;
+							List<Route> temp3Routes = new ArrayList<Route>();
+							for (Route r : temptempRoutes)
+							{
+								temp3Routes.add(r);
+							}
 							for(Route route: temp3Routes)
 							{
 								if(route.getOriginOrderLocation().getAddress() == tempOrders.get(i).getLocation() 
@@ -294,11 +351,19 @@ public class TestServiceImpl implements TestService {
 							}
 							else
 							{
-								List<Order> temp3Orders = temptempOrders;
+								List<Order> temp3Orders = new ArrayList<Order>();
+								for (Order o : temptempOrders)
+								{
+									temp3Orders.add(o);
+								}
 								temp3Orders.remove(temptempOrder);
 								for(int j = 0; j < currentRoutes.size(); j++)
 								{
-									List<Route> temp4Routes = temp3Routes;
+									List<Route> temp4Routes = new ArrayList<Route>();
+									for (Route r : temp3Routes)
+									{
+										temp4Routes.add(r);
+									}
 									for(Route route : temp4Routes)
 									{
 										if(route.getOriginOrderLocation().getAddress() == currentRoutes.get(j).get(2).getDestinationOrderLocation().getAddress()
@@ -332,9 +397,11 @@ public class TestServiceImpl implements TestService {
 			{
 				bestDistance = distance;
 				bestRoute = currentRoute;
-				bestTime.plusMinutes(((int) distance) + 5); // +5 Minutes for packaging
-				distance -= (int) distance;
-				bestTime.plusSeconds((int)(distance * 60));
+				int minutes =(int) Math.floor(distance);
+				bestTime.plusMinutes(minutes + 5); // +5 Minutes for packaging
+				distance -= minutes;
+				int seconds = (int) Math.floor(distance * 60);
+				bestTime.plusSeconds(seconds);
 			}
 		}
 		//Route umkehren, falls Termine nicht eingehalten werden k�nnen
@@ -375,15 +442,17 @@ public class TestServiceImpl implements TestService {
 	}
 	private DateTime getLatestDeliveryStart(List<Route> bestRoute) {
 		DateTime latestDeliveryStart = new DateTime();
-		DateTime deliveryTime = new DateTime();
+		DateTime deliveryTime = new DateTime(simTime.getYear(), simTime.getMonthOfYear(), simTime.getDayOfMonth(), simTime.getHourOfDay(), simTime.getMinuteOfHour(), simTime.getSecondOfMinute());
 		for(Route bRoute : bestRoute)
 		{
-			DateTime dummy = new DateTime();
+			DateTime dummy = new DateTime(simTime.getYear(), simTime.getMonthOfYear(), simTime.getDayOfMonth(), simTime.getHourOfDay(), simTime.getMinuteOfHour(), simTime.getSecondOfMinute());
 			double distance = bRoute.getDistance();
-			deliveryTime.plusMinutes((int) distance);
-			distance -= (int) distance;
-			deliveryTime.plusSeconds((int)(distance * 60));
-			dummy.plusHours(bRoute.getDestinationOrderDate().getHourOfDay() - deliveryTime.getHourOfDay());
+			int minutes = (int) Math.floor(distance);
+			deliveryTime.plusMinutes(minutes);
+			distance -= minutes;
+			int seconds = (int) Math.floor(distance * 60);
+			deliveryTime.plusSeconds(seconds);
+			dummy.plusHours(bRoute.getDestinationOrderDate().getHourOfDay() + 1 - deliveryTime.getHourOfDay());
 			dummy.plusMinutes(bRoute.getDestinationOrderDate().getMinuteOfHour() - deliveryTime.getMinuteOfHour());
 			dummy.plusSeconds(bRoute.getDestinationOrderDate().getSecondOfMinute() - deliveryTime.getSecondOfMinute());
 			if(dummy.isBefore(latestDeliveryStart))

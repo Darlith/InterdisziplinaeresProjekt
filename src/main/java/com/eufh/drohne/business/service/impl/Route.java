@@ -33,5 +33,11 @@ public class Route {
 		return destinationOrderDate;
 	}
 
-	
+	@Override
+	public String toString() {
+		return "Route [originOrderLocation=" + originOrderLocation + ", destinationOrderLocation="
+				+ destinationOrderLocation + ", destinationOrderDate=" + destinationOrderDate + ", distance=" + distance
+				+ "]";
+	}
+
 }

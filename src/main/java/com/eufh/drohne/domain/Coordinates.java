@@ -30,6 +30,17 @@ public class Coordinates {
 		return longitude;
 	}
 	
+	
+	
+	@Override
+	public String toString() {
+		return "Coordinates [location=" + location + ", latitude=" + latitude + ", longitude=" + longitude + "]";
+	}
+
+	public Coordinates()
+	{
+		//default
+	}
 	public Coordinates(String location, double latitude, double longitude) {
 		this.location = location;
 		this.latitude = latitude; 

@@ -54,7 +54,7 @@ public class TestController {
 		// Setzt den Namen der Seite auf der validationHeader.html
 		model.addAttribute("pageName", "Bepacken");
 		
-		TestServiceImpl demo = new TestServiceImpl(null);
+		TestServiceImpl demo = new TestServiceImpl(null, testService);
 		demo.startDroneSimulation();
 		
 		//ArrayList<Order> orders = testService.findAll();

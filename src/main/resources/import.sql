@@ -10,4 +10,4 @@
 
 --INSERT INTO DROHNE (ID, LIEFERORT, GEWICHT) VALUES ( 1, 'Kingston', '3' ), ( 2, 'Budapest', '2' ), ( 3, 'Krefeld', '2.5' ), ( 4, 'Deutschland', '0.5' ), ( 5, 'Stadt', '4' );
 
-INSERT INTO ORDERS (LOCATION, WEIGHT) VALUES ( 'Stete', 4.0 ), ( 'Kingston', 2.1 );
+--INSERT INTO ORDERS (LOCATION, WEIGHT) VALUES ( 'Stete', 4.0 ), ( 'Kingston', 2.1 );

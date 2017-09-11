@@ -29,4 +29,10 @@ public class OrderLocation {
 	public String getAddress() {
 		return address;
 	}
+	@Override
+	public String toString() {
+		return "OrderLocation [orderID=" + orderID + ", address=" + address + ", latlng=" + latlng + "]";
+	}
+	
+	
 }

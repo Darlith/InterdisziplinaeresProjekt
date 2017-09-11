@@ -14,7 +14,7 @@ import org.joda.time.DateTime;
 
 public class Order {
 	
-	private static final AtomicInteger ID_GENERATOR = new AtomicInteger(10000);
+	private static final AtomicInteger ID_GENERATOR = new AtomicInteger(1);
 	
 	private int id;
 	
@@ -83,6 +83,14 @@ public class Order {
 	public void setDrone(Drohne drone) {
 		this.drone = drone;
 	}
+
+	@Override
+	public String toString() {
+		return "Order [id=" + id + ", orderDate=" + orderDate + ", location=" + location + ", weight=" + weight
+				+ ", drone=" + drone + "]";
+	}
+	
+	
 	
 	
 }

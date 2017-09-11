@@ -89,4 +89,12 @@ public class Drohne {
 				+ "Kilo auf einer Strecke von " + this.totalDistance + "\\. Es werden folgende Orte beliefert: ");
 		this.resetDrone();
 	}
+
+	@Override
+	public String toString() {
+		return "Drohne [id=" + id + ", totalPackageWeight=" + totalPackageWeight + ", packageCount=" + packageCount
+				+ ", totalDistance=" + totalDistance + ", orders=" + orders + ", speed=" + speed + "]";
+	}
+	
+	
 }
