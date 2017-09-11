@@ -64,12 +64,4 @@ public class Order {
 	public int getId() {
 		return id;
 	}
-	public DateTime getOrderDateById(int id)
-	{
-		if(this.id == id)
-		{
-			return this.orderDate;
-		}
-		return null;
-	}
 }

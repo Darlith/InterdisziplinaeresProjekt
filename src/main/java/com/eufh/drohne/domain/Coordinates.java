@@ -11,9 +11,6 @@ import javax.persistence.Table;
 public class Coordinates {
 	
 	@Id
-	@GeneratedValue
-	@Column(name = "ID")
-	private int id;
 	@Column(name = "Location")
 	private String location;
 	@Column(name = "Latitude")
@@ -21,10 +18,6 @@ public class Coordinates {
 	@Column(name = "Longitude")
 	private double longitude;
 	
-	public int getId() {
-		return id;
-	}
-
 	public String getLocation() {
 		return location;
 	}
@@ -42,5 +35,4 @@ public class Coordinates {
 		this.latitude = latitude; 
 		this.longitude = longitude;
 	}
-
 }

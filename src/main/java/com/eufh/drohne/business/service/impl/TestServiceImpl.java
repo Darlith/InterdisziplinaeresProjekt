@@ -25,7 +25,6 @@ public class TestServiceImpl implements TestService {
 	GeoApiContext geoContext;
 	DateTime simTime;
 	Order[] order;
-	List<Coordinates> locCoords;
 	int nextOrder;
 	Drohne[] drones;
 	Drohne activeDrone;
@@ -43,8 +42,7 @@ public class TestServiceImpl implements TestService {
 
 	@Override
 	public Order findOne(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		return testRepository.findOne(id);
 	}
 
 	@Override
@@ -75,8 +73,6 @@ public class TestServiceImpl implements TestService {
 				"20.01.2017, 08:05, Kingsbridge, 2.7" };
 		this.order = new Order[input.length];
 		CreateOrderByList(input);
-		
-		this.locCoords = new ArrayList<Coordinates>();
 		this.nextOrder = 0;
 		this.drones = new Drohne[] {new Drohne(), new Drohne(), new Drohne(), new Drohne(), new Drohne()};
 		SetNextDroneActive();
@@ -95,6 +91,7 @@ public class TestServiceImpl implements TestService {
 					Integer.parseInt(date[0]), Integer.parseInt(time[0]), Integer.parseInt(time[1]));
 			double weight = Double.parseDouble(orderArr[3].trim());
 			this.order[i] = new Order(orderDate, orderArr[2].trim(), weight);
+			this.save(order[i]);
 		}
 	}
 
@@ -136,7 +133,7 @@ public class TestServiceImpl implements TestService {
 			}
 			if((activeDrone.getTotalPackageWeight() + order[nextOrder].getWeight()) <= 4.0)
 			{
-				if(calcDroneRoutes())
+				if(calcDroneRoutes(order[nextOrder]))
 				{
 					activeDrone.addPackage(order[nextOrder]);
 				}
@@ -148,10 +145,9 @@ public class TestServiceImpl implements TestService {
 			{
 				activeDrone.start(simTime);
 				SetNextDroneActive();
+				calcDroneRoutes(order[nextOrder]);
 				activeDrone.addPackage(order[nextOrder]);
-				calcDroneRoutes();
-			}
-			
+			}	
 		}
 		nextOrder++;
 	}
@@ -163,11 +159,12 @@ public class TestServiceImpl implements TestService {
 	
 
 	//TODO PHKO: Weiterentwickeln, Schnittstelle zum Frontend und Datenbank bilden
-	private boolean calcDroneRoutes() {
+	private boolean calcDroneRoutes(Order currentOrder) {
 		List<OrderLocation> currentOrderLocations = new ArrayList<OrderLocation>();
 		List<Route> routes = new ArrayList<Route>();
 		currentOrderLocations.add(new OrderLocation(0, "Salcombe", new LatLng(50.2375800, -3.7697910)));
 		List<Order> orders = activeDrone.getOrders();
+		orders.add(currentOrder);
 		for(Order order : orders)
 		{
 			currentOrderLocations.add(new OrderLocation(order.getId(), order.getLocation()));
@@ -188,34 +185,24 @@ public class TestServiceImpl implements TestService {
 		{
 			for (int j = i + 1; j < currentOrderLocations.size(); j++) 
 			{
-				double distance = Haversine.getDistance(locCoords.get(i).getLatitude(),locCoords.get(i).getLongitude(),
-						locCoords.get(j).getLatitude(), locCoords.get(j).getLongitude());
+				double distance = Haversine.getDistance(currentOrderLocations.get(i).getLatlng().lat,currentOrderLocations.get(i).getLatlng().lng,
+						currentOrderLocations.get(j).getLatlng().lat, currentOrderLocations.get(j).getLatlng().lng);
 				DateTime originOrderDate = null;
 				DateTime destinationOrderDate = null;
 				if(currentOrderLocations.get(i).getAddress() != "Salcombe")
 				{			
-					int k = 0;
-					while (originOrderDate == null)
-					{
-						originOrderDate = orders.get(k).getOrderDateById(currentOrderLocations.get(i).getOrderID());
-						k++;
-					}
+					this.findOne(Integer.toString(currentOrderLocations.get(i).getOrderID()));
 				}
 				if(currentOrderLocations.get(j).getAddress() != "Salcombe")
 				{
-					int l = 0;
-					while(destinationOrderDate == null)
-					{
-						destinationOrderDate = orders.get(l).getOrderDateById(currentOrderLocations.get(j).getOrderID());
-						l++;
-					}
+					this.findOne(Integer.toString(currentOrderLocations.get(j).getOrderID()));
 				}
 				routes.add(new Route(currentOrderLocations.get(i), currentOrderLocations.get(j), destinationOrderDate , distance));
 				routes.add(new Route(currentOrderLocations.get(j), currentOrderLocations.get(i), originOrderDate , distance));
 				//CODE FOR TESTING
 				int distanceKm = (int) distance;
 				int distanceMeters = (int) ((distance - (double) distanceKm) * 1000);
-				System.out.println("Distance from " + locCoords.get(i).getLocation() + " to " + locCoords.get(j).getLocation() + " : "
+				System.out.println("Distance from " + currentOrderLocations.get(i).getAddress() + " to " + currentOrderLocations.get(j).getAddress() + " : "
 						+ distanceKm + "km " + distanceMeters + "m");
 				//CODE FOR TESTING
 			}

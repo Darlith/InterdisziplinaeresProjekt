@@ -19,6 +19,7 @@ public interface TestRepository extends PagingAndSortingRepository<Order, String
 
 	Page<Order> findAll(Pageable pageable);
 	
+	@SuppressWarnings("unchecked")
 	Order save(Order order);
 	
 	Coordinates save(Coordinates coordinates);
