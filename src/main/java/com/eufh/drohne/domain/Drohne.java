@@ -30,7 +30,7 @@ public class Drohne {
 	@Transient
 	private List<Order> orders = new ArrayList<Order>();
 	@Column(name = "geschwindigkeit")
-	private final int speed = 60; // kmh
+	public int speed = 60; // kmh
 	
 	public Drohne() {
 		this.totalPackageWeight = 0.0;

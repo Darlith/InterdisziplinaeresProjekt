@@ -28,7 +28,7 @@ public class TestServiceImpl implements TestService {
 	int nextOrder;
 	Drohne[] drones;
 	Drohne activeDrone;
-
+	
 	private TestRepository testRepository;
 
 	public TestServiceImpl(TestRepository repo) {
@@ -45,12 +45,6 @@ public class TestServiceImpl implements TestService {
 		return testRepository.findOne(id);
 	}
 
-	@Override
-	public Page<Coordinates> findAll(Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	@Override
 	@Transactional
 	public Coordinates save(Coordinates coordinates) {

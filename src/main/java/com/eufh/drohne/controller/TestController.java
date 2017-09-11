@@ -20,17 +20,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.eufh.drohne.business.service.DroneService;
 import com.eufh.drohne.business.service.TestService;
 import com.eufh.drohne.business.service.impl.TestServiceImpl;
+import com.eufh.drohne.domain.Drohne;
 import com.eufh.drohne.domain.Order;
 
 @Controller
 public class TestController {
 
 	private TestService testService;
+	private DroneService droneService;
 
-	public TestController(TestService testService) {
+	public TestController(TestService testService, DroneService droneService) {
 		this.testService = testService;
+		this.droneService = droneService;
 	}
 
 	// Login form
@@ -57,8 +61,8 @@ public class TestController {
 		TestServiceImpl demo = new TestServiceImpl(null);
 		demo.startDroneSimulation();
 		
-		//ArrayList<Order> orders = testService.findAll();
-		//model.addAttribute("list", orders);
+//		ArrayList<Order> orders = testService.findAll();
+//		model.addAttribute("list", orders);
 		return "bepacken";
 	}
 
@@ -74,8 +78,8 @@ public class TestController {
 		// Setzt den Namen der Seite auf der validationHeader.html
 		model.addAttribute("pageName", "Dashboard");
 		
-		//ArrayList<Order> orders = testService.findAll();
-		//model.addAttribute("list", orders);
+		ArrayList<Drohne> drohnen = droneService.findAll();
+		model.addAttribute("list", drohnen);
 		return "dashboard";
 	}
 

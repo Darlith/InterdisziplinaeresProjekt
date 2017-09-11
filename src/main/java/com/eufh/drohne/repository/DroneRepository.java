@@ -11,15 +11,10 @@ import com.eufh.drohne.domain.Coordinates;
 import com.eufh.drohne.domain.Drohne;
 
 @Component
-public interface TestRepository extends Repository<Coordinates, String> {
+public interface DroneRepository extends Repository<Drohne, String> {
 
-	Coordinates findOne(String id);
-
-	ArrayList<Coordinates> findAll();
+	ArrayList<Drohne> findAll();
 	
-	@SuppressWarnings("unchecked")
-	Coordinates save(Coordinates coordinates);
+	Drohne save(Drohne drohne);
 	
-	//@Query("Select x from Drohne as x where x.id = pers") //eigentlich ? anstatt pers
-	//Order findByPers(String pers);
 }

@@ -5,12 +5,10 @@ import java.util.ArrayList;
 import com.eufh.drohne.domain.Coordinates;
 import com.eufh.drohne.domain.Drohne;
 
-public interface TestService {
+public interface DroneService {
 
-	Coordinates findOne(String id);
+	ArrayList<Drohne> findAll();
 
-	ArrayList<Coordinates> findAll();
-
-	Coordinates save(Coordinates coordinates);
+	Drohne save(Drohne drohne);
 
 }
