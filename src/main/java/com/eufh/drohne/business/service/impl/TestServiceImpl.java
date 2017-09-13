@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +64,12 @@ public class TestServiceImpl implements TestService {
 				"20.01.2017, 08:01, Thurlestone, 1.2",
 				"20.01.2017, 08:02, Beesands, 0.7", 
 				"20.01.2017, 08:02, West Charleton, 3.9",
-				"20.01.2017, 08:05, Kingsbridge, 2.7" };
+				"20.01.2017, 08:05, Kingsbridge, 2.7",
+				"20.01.2017, 08:07, Strete, 3.2",
+				"20.01.2017, 08:08, Churchstow, 1.6",
+				"20.01.2017, 08:10, Hope, 2.0",
+				"20.01.2017, 08:11, Malborough, 1.5",
+				"20.01.2017, 08:11, Bigbury, 2.3"};
 		this.incOrders = new Order[input.length];
 		CreateOrderByList(input);
 		this.nextOrder = 0;
@@ -89,18 +95,35 @@ public class TestServiceImpl implements TestService {
 	}
 
 	private void SetNextDroneActive() {
-		if (activeDrone == null || activeDrone.getId() == 5)
+		int id;
+		if (activeDrone == null || (id = activeDrone.getId()) == 5)
 		{
-			this.activeDrone = drones[0];
+			this.activeDrone = SetNextAvailableDroneActive(0);
 		}
 		else
 		{
-			activeDrone = drones[activeDrone.getId()];
+			this.activeDrone = SetNextAvailableDroneActive(id);
 		}
 		activeDrone.resetDrone();
 		this.bestDistance = 0.0;
 		this.bestRoute = null;
 		this.droneReturnTime = null;
+	}
+
+	private Drohne SetNextAvailableDroneActive(int id) {
+		boolean isAvailable = false;
+		while(!isAvailable)
+		{
+			if(drones[id].getReturnTime() == null || drones[id].getReturnTime().isBefore(simTime))
+			{
+				return drones[id];
+			}
+			else
+			{
+				id++;
+			}
+		}
+		return null; //Error display, that no drones are available
 	}
 
 	private void setSimTime() {
@@ -256,8 +279,10 @@ public class TestServiceImpl implements TestService {
 		bestDistance = Double.MAX_VALUE;
 		this.bestRoute = new ArrayList<Route>();
 		List<ArrayList<Route>> currentRoutes = new ArrayList<ArrayList<Route>>();
-		for(Order order : orders)
+		int pointer = 0;
+		for(int i = 0; i< orders.size(); i++)
 		{
+			//System.out.println("i" + orders.get(i));
 			List<Route> tempRoutes = new ArrayList<Route>();
 			for (Route r : routes)
 			{
@@ -268,20 +293,24 @@ public class TestServiceImpl implements TestService {
 			{
 				Route route = itr.next();
 				if(route.getOriginOrderLocation().getAddress() == "Salcombe" 
-						&& route.getDestinationOrderLocation().getAddress() == order.getLocation())
+						&& route.getDestinationOrderLocation().getAddress() == orders.get(i).getLocation())
 				{
-					for (int i = 0; i < ((orders.size() -1) * (orders.size() - 2)); i++)
+					pointer = currentRoutes.size();
+					if(orders.size() >= 3)
 					{
-						currentRoutes.add(new ArrayList<Route>(Arrays.asList(route)));
+						for (int j = 0; j < ((orders.size() -1) * (orders.size() - 2)); j++)
+						{
+							currentRoutes.add(new ArrayList<Route>(Arrays.asList(route)));
+						}
 					}
-					if(currentRoutes.size() == 0)
+					else
 					{
 						currentRoutes.add(new ArrayList<Route>(Arrays.asList(route)));
 					}
 					itr.remove();
 				}
 				else if(route.getOriginOrderLocation().getAddress() == "Salcombe" 
-						|| route.getDestinationOrderLocation().getAddress() == order.getLocation())
+						|| route.getDestinationOrderLocation().getAddress() == orders.get(i).getLocation())
 				{
 					itr.remove();
 				}
@@ -298,9 +327,10 @@ public class TestServiceImpl implements TestService {
 				{
 					tempOrders.add(o);
 				}
-				tempOrders.remove(order);
-				for(int i = 0; i < tempOrders.size(); i++)
+				tempOrders.remove(orders.get(i));
+				for(int j = 0; j < tempOrders.size(); j++)
 				{
+					//System.out.println("j"+ orders.get(j));
 					List<Route> temptempRoutes = new ArrayList<Route>();
 					for (Route r : tempRoutes)
 					{
@@ -310,25 +340,25 @@ public class TestServiceImpl implements TestService {
 					while(itr.hasNext())
 					{
 						Route route = itr.next();
-						if(route.getOriginOrderLocation().getAddress() == order.getLocation() 
-								&& route.getDestinationOrderLocation().getAddress() == tempOrders.get(i).getLocation())
+						if(route.getOriginOrderLocation().getAddress() == orders.get(i).getLocation() 
+								&& route.getDestinationOrderLocation().getAddress() == tempOrders.get(j).getLocation())
 						{
-							currentRoutes.get(i).add(route);
+							currentRoutes.get(pointer+j).add(route);
 							if(orders.size() == 4)
 							{
-								currentRoutes.get(i+3).add(route);
+								currentRoutes.get(pointer+j+3).add(route);
 							}
 							itr.remove();
 						}
-						else if(route.getOriginOrderLocation().getAddress() == order.getLocation() 
-								|| route.getDestinationOrderLocation().getAddress() == tempOrders.get(i).getLocation())
+						else if(route.getOriginOrderLocation().getAddress() == orders.get(i).getLocation() 
+								|| route.getDestinationOrderLocation().getAddress() == tempOrders.get(j).getLocation())
 						{
 							itr.remove();
 						}
 					}
 					if(orders.size() == 2)
 					{
-						currentRoutes.get(i).add(temptempRoutes.get(0));
+						currentRoutes.get(pointer+j).add(temptempRoutes.get(0));
 					}
 					else
 					{
@@ -337,9 +367,10 @@ public class TestServiceImpl implements TestService {
 						{
 							temptempOrders.add(o);
 						}
-						temptempOrders.remove(tempOrders.get(i));
-						for(Order temptempOrder : temptempOrders)
+						temptempOrders.remove(tempOrders.get(j));
+						for(int k = 0; k < temptempOrders.size(); k++)
 						{
+							//System.out.println("3rd" + temptempOrder);
 							List<Route> temp3Routes = new ArrayList<Route>();
 							for (Route r : temptempRoutes)
 							{
@@ -349,25 +380,28 @@ public class TestServiceImpl implements TestService {
 							while(itr.hasNext())
 							{
 								Route route = itr.next();
-								if(route.getOriginOrderLocation().getAddress() == tempOrders.get(i).getLocation() 
-								&& route.getDestinationOrderLocation().getAddress() == temptempOrder.getLocation())
+								if(route.getOriginOrderLocation().getAddress() == tempOrders.get(j).getLocation() 
+								&& route.getDestinationOrderLocation().getAddress() == temptempOrders.get(k).getLocation())
 								{
-									currentRoutes.get(i).add(route);
-									if(orders.size() == 4)
+									if(k == 0)
 									{
-										currentRoutes.get(i+3).add(route);
+										currentRoutes.get(pointer+j).add(route);
+									}
+									else
+									{
+										currentRoutes.get(pointer+j+3).add(route);
 									}
 									itr.remove();
 								}
-								else if(route.getOriginOrderLocation().getAddress() == tempOrders.get(i).getLocation() 
-										|| route.getDestinationOrderLocation().getAddress() == temptempOrder.getLocation())
+								else if(route.getOriginOrderLocation().getAddress() == tempOrders.get(j).getLocation() 
+										|| route.getDestinationOrderLocation().getAddress() == temptempOrders.get(k).getLocation())
 								{
 									itr.remove();
 								}
 							}
 							if(orders.size() == 3)
 							{
-								currentRoutes.get(i).add(temp3Routes.get(0));
+								currentRoutes.get(pointer+j+k).add(temp3Routes.get(0));
 							}
 							else
 							{
@@ -376,9 +410,10 @@ public class TestServiceImpl implements TestService {
 								{
 									temp3Orders.add(o);
 								}
-								temp3Orders.remove(temptempOrder);
-								for(int j = 0; j < currentRoutes.size(); j++)
+								temp3Orders.remove(temptempOrders.get(k));
+								for(int m = pointer; m < currentRoutes.size(); m++)
 								{
+									//System.out.println("4th" + temp3Orders.toString());
 									List<Route> temp4Routes = new ArrayList<Route>();
 									for (Route r : temp3Routes)
 									{
@@ -388,19 +423,19 @@ public class TestServiceImpl implements TestService {
 									while(itr.hasNext())
 									{
 										Route route = itr.next();
-										if(route.getOriginOrderLocation().getAddress() == currentRoutes.get(j).get(2).getDestinationOrderLocation().getAddress()
+										if(route.getOriginOrderLocation().getAddress() == currentRoutes.get(m).get(2).getDestinationOrderLocation().getAddress()
 												&& route.getDestinationOrderLocation().getAddress() == temp3Orders.get(0).getLocation())
 										{
-											currentRoutes.get(j).add(route);
+											currentRoutes.get(m).add(route);
 											itr.remove();
 										}
-										else if(route.getOriginOrderLocation().getAddress() == currentRoutes.get(j).get(2).getDestinationOrderLocation().getAddress()
+										else if(route.getOriginOrderLocation().getAddress() == currentRoutes.get(m).get(2).getDestinationOrderLocation().getAddress()
 												|| route.getDestinationOrderLocation().getAddress() == temp3Orders.get(0).getLocation())
 										{
 											itr.remove();
 										}
 									}
-									currentRoutes.get(j).add(temp4Routes.get(0));
+									currentRoutes.get(m).add(temp4Routes.get(0));
 								}
 							}
 						}					

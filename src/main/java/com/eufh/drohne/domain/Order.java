@@ -86,7 +86,7 @@ public class Order {
 
 	@Override
 	public String toString() {
-		return "Order [id=" + id + ", orderDate=" + orderDate + ", location=" + location + ", weight=" + weight
-				+ ", drone=" + drone + "]";
+		return "Order [id=" + id + ", orderDate=" + orderDate + ", location=" + location + ", weight=" + weight + "]";
 	}
+	
 }

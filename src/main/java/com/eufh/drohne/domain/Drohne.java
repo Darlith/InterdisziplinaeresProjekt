@@ -132,6 +132,19 @@ public class Drohne {
 
 	public void start(DateTime simTime)
 	{
+		for(Order o : this.orders)
+		{
+			ProcessedOrder po = new ProcessedOrder(o.getId(), o.getOrderDate(), o.getLocation(), o.getWeight(), simTime, this.id);
+			for(Route r : this.route)
+			{
+				if(r.getDestinationOrderLocation().getOrderID() == o.getId())
+				{
+					int minutes = (int) Math.floor(r.getDistance());
+					int seconds = (int) Math.floor((r.getDistance() - minutes)*60);
+					po.setDeliveryDate(simTime.plusMinutes(minutes).plusSeconds(seconds));
+				}
+			}
+		}
 		//return an Frontend
 		//TEST CODE
 		System.out.println("Drohne gestartet um " + simTime.toString() + " mit" + this.packageCount + "Paketen mit " 
