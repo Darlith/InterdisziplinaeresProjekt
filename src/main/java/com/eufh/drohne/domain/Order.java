@@ -67,7 +67,7 @@ public class Order {
 		return id;
 	}
 	
-	public Order findOne(int id)
+	public Order getOrder(int id)
 	{
 		if(this.id == id)
 		{
@@ -89,8 +89,4 @@ public class Order {
 		return "Order [id=" + id + ", orderDate=" + orderDate + ", location=" + location + ", weight=" + weight
 				+ ", drone=" + drone + "]";
 	}
-	
-	
-	
-	
 }

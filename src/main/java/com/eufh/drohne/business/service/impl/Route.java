@@ -2,12 +2,14 @@ package com.eufh.drohne.business.service.impl;
 
 import org.joda.time.DateTime;
 
+import com.eufh.drohne.domain.Order;
+
 public class Route {
 	private OrderLocation originOrderLocation;
 	private OrderLocation destinationOrderLocation;
 	private DateTime destinationOrderDate;
 	private double distance;
-	
+		
 	public Route(OrderLocation originOrderLocation, OrderLocation destinationOrderLocation, DateTime destinationOrderDate, double distance)
 	{
 		this.originOrderLocation = originOrderLocation;
@@ -20,7 +22,6 @@ public class Route {
 		return distance;
 	}
 
-	
 	public OrderLocation getOriginOrderLocation() {
 		return originOrderLocation;
 	}

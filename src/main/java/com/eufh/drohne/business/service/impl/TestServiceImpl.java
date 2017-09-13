@@ -1,13 +1,11 @@
 package com.eufh.drohne.business.service.impl;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.eufh.drohne.business.service.TestService;
@@ -22,15 +20,17 @@ import com.google.maps.model.LatLng;
 
 public class TestServiceImpl implements TestService {
 	
-	GeoApiContext geoContext;
-	DateTime simTime;
-	Order[] order;
-	int nextOrder;
-	Drohne[] drones;
-	Drohne activeDrone;
-	
+	private GeoApiContext geoContext;
+	private DateTime simTime;
+	private Order[] incOrders;
+	private int nextOrder;
+	private Drohne[] drones;
+	private Drohne activeDrone;
 	private TestRepository testRepository;
 	private TestService testService;
+	private DateTime droneReturnTime;
+	List<Route> bestRoute;
+	double bestDistance;
 	
 	public TestServiceImpl(TestRepository repo, TestService testService) {
 		this.testRepository = repo;
@@ -58,12 +58,16 @@ public class TestServiceImpl implements TestService {
 	 */
 	public void startDroneSimulation() {
 		//TODO PHKO: expand method as needed (DoSomething)
-		String [] input = new String[] { "20.01.2017, 08:00, Strete, 2.1", "20.01.2017, 08:01, Thurlestone, 1.2",
-				"20.01.2017, 08:02, Beesands, 0.7", "20.01.2017, 08:02, West Charleton, 3.9",
+		String [] input = new String[] { 
+				"20.01.2017, 08:00, Strete, 2.1", 
+				"20.01.2017, 08:01, Thurlestone, 1.2",
+				"20.01.2017, 08:02, Beesands, 0.7", 
+				"20.01.2017, 08:02, West Charleton, 3.9",
 				"20.01.2017, 08:05, Kingsbridge, 2.7" };
-		this.order = new Order[input.length];
+		this.incOrders = new Order[input.length];
 		CreateOrderByList(input);
 		this.nextOrder = 0;
+		this.bestRoute = new ArrayList<Route>();
 		this.drones = new Drohne[] {new Drohne(), new Drohne(), new Drohne(), new Drohne(), new Drohne()};
 		SetNextDroneActive();
 		setSimTime();
@@ -80,7 +84,7 @@ public class TestServiceImpl implements TestService {
 			DateTime orderDate = new DateTime(Integer.parseInt(date[2]), Integer.parseInt(date[1]), 
 					Integer.parseInt(date[0]), Integer.parseInt(time[0]), Integer.parseInt(time[1]));
 			double weight = Double.parseDouble(orderArr[3].trim());
-			this.order[i] = new Order(orderDate, orderArr[2].trim(), weight);
+			this.incOrders[i] = new Order(orderDate, orderArr[2].trim(), weight);
 		}
 	}
 
@@ -94,14 +98,17 @@ public class TestServiceImpl implements TestService {
 			activeDrone = drones[activeDrone.getId()];
 		}
 		activeDrone.resetDrone();
+		this.bestDistance = 0.0;
+		this.bestRoute = null;
+		this.droneReturnTime = null;
 	}
 
 	private void setSimTime() {
-		simTime = order[0].getOrderDate().minusMinutes(1);
+		simTime = incOrders[0].getOrderDate().minusMinutes(1);
 	}
 
 	private void Simulate() {
-		while (nextOrder < order.length) {
+		while (nextOrder < incOrders.length) {
 		AddMinute();
 		AddOrder();
 		CheckMaximumTime();
@@ -111,39 +118,51 @@ public class TestServiceImpl implements TestService {
 
 	private void AddMinute() {
 		simTime = simTime.plusMinutes(1);
+		if(droneReturnTime != null)
+		{
+			droneReturnTime.plusMinutes(1);
+		}
 	}
 	
 	private void AddOrder() {
-		if(simTime.equals(order[nextOrder].getOrderDate())) 
+		while(nextOrder < incOrders.length && simTime.equals(incOrders[nextOrder].getOrderDate())) 
 		{
-			if(order[nextOrder].getWeight() > 4.0)
+			if(incOrders[nextOrder].getWeight() > 4.0)
 			{
 				//TODO: Paket ist schwerer als erlaubt, Error display
 			}
-			if((activeDrone.getTotalPackageWeight() + order[nextOrder].getWeight()) <= 4.0)
+			if((activeDrone.getTotalPackageWeight() + incOrders[nextOrder].getWeight()) <= 4.0 && calcDroneRoutes(incOrders[nextOrder]))
 			{
-				if(calcDroneRoutes(order[nextOrder]))
-				{
-					activeDrone.addPackage(order[nextOrder]);
-				}
-				
-				
+				addPackage(activeDrone, incOrders[nextOrder]);
 			}
 			// TODO: else Starte aktive Drohne und f�ge aktuelles Paket zu neuer Drohne hinzu
 			else
 			{
 				activeDrone.start(simTime);
 				SetNextDroneActive();
-				calcDroneRoutes(order[nextOrder]);
-				activeDrone.addPackage(order[nextOrder]);
+				calcDroneRoutes(incOrders[nextOrder]);
+				addPackage(activeDrone, incOrders[nextOrder]);
 			}	
+			nextOrder++;
 		}
-		nextOrder++;
+	}
+
+	private void addPackage(Drohne activeDrone, Order order) {
+		activeDrone.addPackage(order);
+		activeDrone.setTotalDistance(bestDistance);
+		activeDrone.setReturnTime(droneReturnTime);
+		activeDrone.setRoute(bestRoute);
 	}
 
 	private void CheckMaximumTime() {
-		// TODO Auto-generated method stub
-		
+		if(bestRoute != null)
+		{
+			if(!willAllDeliveriesBeInTime(simTime.plusMinutes(1), bestRoute))
+			{
+				activeDrone.start(simTime);
+				SetNextDroneActive();
+			}
+		}
 	}
 	
 
@@ -153,12 +172,16 @@ public class TestServiceImpl implements TestService {
 		List<OrderLocation> currentOrderLocations = new ArrayList<OrderLocation>();
 		List<Route> routes = new ArrayList<Route>();
 		currentOrderLocations.add(new OrderLocation(0, "Salcombe", new LatLng(50.2375800, -3.7697910)));
-		List<Order> orders = activeDrone.getOrders();
+		List<Order> orders = new ArrayList<Order>();
+		for(Order o : activeDrone.getOrders())
+		{
+			orders.add(o);
+		}
 		List<OrderLocation> queryOrderLocations = new ArrayList<OrderLocation>();
 		orders.add(currentOrder);
-		for(Order order : orders)
+		for(Order o : orders)
 		{
-			orderLocations.add(new OrderLocation(order.getId(), order.getLocation()));
+			orderLocations.add(new OrderLocation(o.getId(), o.getLocation()));
 		}
 		for(OrderLocation ol : orderLocations)
 		{
@@ -203,10 +226,9 @@ public class TestServiceImpl implements TestService {
 				{			
 					for (Order o : orders)
 					{
-						Order searchOrder = o.findOne(currentOrderLocations.get(i).getOrderID());
-						if(searchOrder != null);
+						if(o.getId() == currentOrderLocations.get(i).getOrderID())
 						{
-							originOrderDate = searchOrder.getOrderDate();
+							originOrderDate = o.getOrderDate();
 						}
 					}
 				}
@@ -214,27 +236,25 @@ public class TestServiceImpl implements TestService {
 				{
 					for (Order o : orders)
 					{
-						Order searchOrder = o.findOne(currentOrderLocations.get(j).getOrderID());
-						if(searchOrder != null);
+						if(o.getId() == currentOrderLocations.get(j).getOrderID())
 						{
-							destinationOrderDate = searchOrder.getOrderDate();
+							destinationOrderDate = o.getOrderDate();
 						}
 					}
 				}
 				routes.add(new Route(currentOrderLocations.get(i), currentOrderLocations.get(j), destinationOrderDate , distance));
 				routes.add(new Route(currentOrderLocations.get(j), currentOrderLocations.get(i), originOrderDate , distance));
 				//CODE FOR TESTING
-				int distanceKm = (int) distance;
+				/*int distanceKm = (int) distance;
 				int distanceMeters = (int) ((distance - (double) distanceKm) * 1000);
 				System.out.println("Distance from " + currentOrderLocations.get(i).getAddress() + " to " + currentOrderLocations.get(j).getAddress() + " : "
-						+ distanceKm + "km " + distanceMeters + "m");
+						+ distanceKm + "km " + distanceMeters + "m");*/
 				//CODE FOR TESTING
-			}
+			}	
 		}
 		//Beste Route ausw�hlen
-		double bestDistance = Double.MAX_VALUE;
-		Time bestTime = new Time();
-		List<Route> bestRoute = new ArrayList<Route>();
+		bestDistance = Double.MAX_VALUE;
+		this.bestRoute = new ArrayList<Route>();
 		List<ArrayList<Route>> currentRoutes = new ArrayList<ArrayList<Route>>();
 		for(Order order : orders)
 		{
@@ -243,8 +263,10 @@ public class TestServiceImpl implements TestService {
 			{
 				tempRoutes.add(r);
 			}
-			for(Route route: tempRoutes)
+			Iterator<Route> itr = tempRoutes.iterator();
+			while(itr.hasNext())
 			{
+				Route route = itr.next();
 				if(route.getOriginOrderLocation().getAddress() == "Salcombe" 
 						&& route.getDestinationOrderLocation().getAddress() == order.getLocation())
 				{
@@ -256,12 +278,12 @@ public class TestServiceImpl implements TestService {
 					{
 						currentRoutes.add(new ArrayList<Route>(Arrays.asList(route)));
 					}
-					tempRoutes.remove(route);
+					itr.remove();
 				}
 				else if(route.getOriginOrderLocation().getAddress() == "Salcombe" 
 						|| route.getDestinationOrderLocation().getAddress() == order.getLocation())
 				{
-					tempRoutes.remove(route);
+					itr.remove();
 				}
 			}
 			//currentRoutes = 1 wenn ordersize 1 & 2, = 2 wenn ordersize 3, = 6 wenn ordersize 4
@@ -284,8 +306,10 @@ public class TestServiceImpl implements TestService {
 					{
 						temptempRoutes.add(r);
 					}
-					for (Route route : temptempRoutes)
+					itr = temptempRoutes.iterator();
+					while(itr.hasNext())
 					{
+						Route route = itr.next();
 						if(route.getOriginOrderLocation().getAddress() == order.getLocation() 
 								&& route.getDestinationOrderLocation().getAddress() == tempOrders.get(i).getLocation())
 						{
@@ -294,12 +318,12 @@ public class TestServiceImpl implements TestService {
 							{
 								currentRoutes.get(i+3).add(route);
 							}
-							temptempRoutes.remove(route);
+							itr.remove();
 						}
 						else if(route.getOriginOrderLocation().getAddress() == order.getLocation() 
 								|| route.getDestinationOrderLocation().getAddress() == tempOrders.get(i).getLocation())
 						{
-							temptempRoutes.remove(route);
+							itr.remove();
 						}
 					}
 					if(orders.size() == 2)
@@ -321,8 +345,10 @@ public class TestServiceImpl implements TestService {
 							{
 								temp3Routes.add(r);
 							}
-							for(Route route: temp3Routes)
+							itr = temp3Routes.iterator();
+							while(itr.hasNext())
 							{
+								Route route = itr.next();
 								if(route.getOriginOrderLocation().getAddress() == tempOrders.get(i).getLocation() 
 								&& route.getDestinationOrderLocation().getAddress() == temptempOrder.getLocation())
 								{
@@ -331,12 +357,12 @@ public class TestServiceImpl implements TestService {
 									{
 										currentRoutes.get(i+3).add(route);
 									}
-									temp3Routes.remove(route);
+									itr.remove();
 								}
 								else if(route.getOriginOrderLocation().getAddress() == tempOrders.get(i).getLocation() 
 										|| route.getDestinationOrderLocation().getAddress() == temptempOrder.getLocation())
 								{
-									temptempRoutes.remove(route);
+									itr.remove();
 								}
 							}
 							if(orders.size() == 3)
@@ -358,18 +384,20 @@ public class TestServiceImpl implements TestService {
 									{
 										temp4Routes.add(r);
 									}
-									for(Route route : temp4Routes)
+									itr = temp4Routes.iterator();
+									while(itr.hasNext())
 									{
+										Route route = itr.next();
 										if(route.getOriginOrderLocation().getAddress() == currentRoutes.get(j).get(2).getDestinationOrderLocation().getAddress()
 												&& route.getDestinationOrderLocation().getAddress() == temp3Orders.get(0).getLocation())
 										{
 											currentRoutes.get(j).add(route);
-											temp4Routes.remove(route);
+											itr.remove();
 										}
 										else if(route.getOriginOrderLocation().getAddress() == currentRoutes.get(j).get(2).getDestinationOrderLocation().getAddress()
 												|| route.getDestinationOrderLocation().getAddress() == temp3Orders.get(0).getLocation())
 										{
-											temp4Routes.remove(route);
+											itr.remove();
 										}
 									}
 									currentRoutes.get(j).add(temp4Routes.get(0));
@@ -391,15 +419,10 @@ public class TestServiceImpl implements TestService {
 			{
 				bestDistance = distance;
 				bestRoute = currentRoute;
-				int minutes =(int) Math.floor(distance);
-				bestTime.plusMinutes(minutes + 5); // +5 Minutes for packaging
-				distance -= minutes;
-				int seconds = (int) Math.floor(distance * 60);
-				bestTime.plusSeconds(seconds);
 			}
 		}
 		//Route umkehren, falls Termine nicht eingehalten werden k�nnen
-		if(!isRouteValid(bestRoute))
+		if(!willAllDeliveriesBeInTime(simTime, bestRoute))
 		{
 			List<Route> tempRoute = bestRoute;
 			for(int i = 0; i < bestRoute.size(); i++)
@@ -416,7 +439,7 @@ public class TestServiceImpl implements TestService {
 			bestRoute = tempRoute;
 		}
 		//TODO Werte festhalten f�r Validierungen
-		if (bestDistance > 50.0  || !isRouteValid(bestRoute))
+		if (bestDistance > 50.0  || !willAllDeliveriesBeInTime(simTime, bestRoute))
 		{
 			return false;
 		}
@@ -425,36 +448,24 @@ public class TestServiceImpl implements TestService {
 			return true;
 		}
 	}
-
-	private boolean isRouteValid(List<Route> bestRoute) {
-		DateTime tmpTime = simTime.plusMinutes(5);
-		if(tmpTime.isBefore(getLatestDeliveryStart(bestRoute)))
-		{
-			return true;
-		}
-		return false;
-	}
-	private DateTime getLatestDeliveryStart(List<Route> bestRoute) {
-		DateTime latestDeliveryStart = new DateTime();
-		DateTime deliveryTime = new DateTime(simTime.getYear(), simTime.getMonthOfYear(), simTime.getDayOfMonth(), simTime.getHourOfDay(), simTime.getMinuteOfHour(), simTime.getSecondOfMinute());
+	private boolean willAllDeliveriesBeInTime(DateTime time, List<Route> bestRoute) {
+		DateTime deliveryTime = new DateTime(time.getYear(), time.getMonthOfYear(), time.getDayOfMonth(),
+				time.getHourOfDay(), time.getMinuteOfHour() + 5, time.getSecondOfMinute());
 		for(Route bRoute : bestRoute)
 		{
-			DateTime dummy = new DateTime(simTime.getYear(), simTime.getMonthOfYear(), simTime.getDayOfMonth(), simTime.getHourOfDay(), simTime.getMinuteOfHour(), simTime.getSecondOfMinute());
 			double distance = bRoute.getDistance();
 			int minutes = (int) Math.floor(distance);
-			deliveryTime.plusMinutes(minutes);
+			deliveryTime = deliveryTime.plusMinutes(minutes);
 			distance -= minutes;
 			int seconds = (int) Math.floor(distance * 60);
-			deliveryTime.plusSeconds(seconds);
-			dummy.plusHours(bRoute.getDestinationOrderDate().getHourOfDay() + 1 - deliveryTime.getHourOfDay());
-			dummy.plusMinutes(bRoute.getDestinationOrderDate().getMinuteOfHour() - deliveryTime.getMinuteOfHour());
-			dummy.plusSeconds(bRoute.getDestinationOrderDate().getSecondOfMinute() - deliveryTime.getSecondOfMinute());
-			if(dummy.isBefore(latestDeliveryStart))
-			{
-				latestDeliveryStart = dummy;
-			}
+			deliveryTime = deliveryTime.plusSeconds(seconds);
+			if(bRoute.getDestinationOrderDate() != null && !deliveryTime.isBefore(bRoute.getDestinationOrderDate().plusHours(1)))
+					{
+						return false;
+					}
 		}
-		return latestDeliveryStart;
+		droneReturnTime = deliveryTime;
+		return true;
 	}
 	
 	private LatLng getLatLng(String address) throws Exception {

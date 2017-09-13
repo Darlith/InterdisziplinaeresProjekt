@@ -14,10 +14,13 @@ import javax.persistence.Transient;
 
 import org.joda.time.DateTime;
 
+import com.eufh.drohne.business.service.impl.Route;
+
 @Entity
 @Table(name = "Drone")
 public class Drohne {
-
+	
+	
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
@@ -28,11 +31,18 @@ public class Drohne {
 	@Column(name = "distanz")
 	private double totalDistance; //km
 	@Transient
-	private List<Order> orders = new ArrayList<Order>();
+	private List<Order> orders;
 	@Column(name = "geschwindigkeit")
 	public int speed = 60; // kmh
+	@Transient
+	private List<Route> route;
+	@Transient
+	private DateTime returnTime;
+	
 	
 	public Drohne() {
+		this.route = new ArrayList<Route>();
+		this.orders = new ArrayList<Order>();
 		this.totalPackageWeight = 0.0;
 		this.packageCount = 0;	
 		this.setTotalDistance(0.0);
@@ -71,6 +81,8 @@ public class Drohne {
 		this.packageCount = 0;
 		this.setTotalDistance(0.0);
 		this.orders.clear();
+		this.route.clear();
+		this.returnTime = null;
 	}
 	
 	public Drohne findDroneById(int id)
@@ -90,6 +102,16 @@ public class Drohne {
 		this.totalDistance = totalDistance;
 	}
 	
+	
+	
+	public DateTime getReturnTime() {
+		return returnTime;
+	}
+
+	public void setReturnTime(DateTime returnTime) {
+		this.returnTime = returnTime;
+	}
+
 	public double getTotalPackageWeight() {
 		return totalPackageWeight;
 	}
@@ -98,13 +120,27 @@ public class Drohne {
 		return packageCount;
 	}
 	
+
+	public void setRoute(List<Route> route) {
+		this.route = route;
+	}
+	
+	public List<Route> getRoute()
+	{
+		return this.route;
+	}
+
 	public void start(DateTime simTime)
 	{
 		//return an Frontend
 		//TEST CODE
-		System.out.println("Drohne gestartet mit" + this.packageCount + "Paketen mit " + this.totalPackageWeight
-				+ "Kilo auf einer Strecke von " + this.totalDistance + "\\. Es werden folgende Orte beliefert: ");
-		this.resetDrone();
+		System.out.println("Drohne gestartet um " + simTime.toString() + " mit" + this.packageCount + "Paketen mit " 
+		+ this.totalPackageWeight + "Kilo auf einer Strecke von " + this.totalDistance + "\\. Sie wird um " + this.returnTime.toString() 
+				+ " zurückerwartet. Es werden folgende Orte beliefert: ");
+		for(int i = 0; i < route.size() -1; i++)
+		{
+			System.out.println(route.get(i).getDestinationOrderLocation().getAddress());
+		}
 	}
 
 	@Override
