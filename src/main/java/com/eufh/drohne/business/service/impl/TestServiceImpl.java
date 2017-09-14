@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.eufh.drohne.business.service.DroneService;
 import com.eufh.drohne.business.service.TestService;
 import com.eufh.drohne.domain.Drohne;
 import com.eufh.drohne.domain.Coordinates;
 import com.eufh.drohne.domain.Order;
+import com.eufh.drohne.repository.DroneRepository;
 import com.eufh.drohne.repository.TestRepository;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
@@ -29,13 +30,17 @@ public class TestServiceImpl implements TestService {
 	private Drohne activeDrone;
 	private TestRepository testRepository;
 	private TestService testService;
+	private DroneService droneService;
 	private DateTime droneReturnTime;
 	List<Route> bestRoute;
 	double bestDistance;
+	DateTime nextDroneAvailableTime;
+	int nextDroneAvailableId;
 	
-	public TestServiceImpl(TestRepository repo, TestService testService) {
+	public TestServiceImpl(TestRepository repo, TestService testService, DroneService droneService) {
 		this.testRepository = repo;
 		this.testService = testService;
+		this.droneService = droneService;
 	}
 
 	@Override
@@ -67,7 +72,7 @@ public class TestServiceImpl implements TestService {
 				"20.01.2017, 08:05, Kingsbridge, 2.7",
 				"20.01.2017, 08:07, Strete, 3.2",
 				"20.01.2017, 08:08, Churchstow, 1.6",
-				"20.01.2017, 08:10, Hope, 2.0",
+				"20.01.2017, 08:10, Hope Cove, 2.0",
 				"20.01.2017, 08:11, Malborough, 1.5",
 				"20.01.2017, 08:11, Bigbury, 2.3"};
 		this.incOrders = new Order[input.length];
@@ -75,6 +80,10 @@ public class TestServiceImpl implements TestService {
 		this.nextOrder = 0;
 		this.bestRoute = new ArrayList<Route>();
 		this.drones = new Drohne[] {new Drohne(), new Drohne(), new Drohne(), new Drohne(), new Drohne()};
+		for(Drohne drone: drones)
+		{
+			droneService.save(drone);
+		}
 		SetNextDroneActive();
 		setSimTime();
 		
@@ -104,7 +113,10 @@ public class TestServiceImpl implements TestService {
 		{
 			this.activeDrone = SetNextAvailableDroneActive(id);
 		}
-		activeDrone.resetDrone();
+		if(activeDrone != null)
+		{
+			activeDrone.resetDrone();
+		}
 		this.bestDistance = 0.0;
 		this.bestRoute = null;
 		this.droneReturnTime = null;
@@ -112,7 +124,9 @@ public class TestServiceImpl implements TestService {
 
 	private Drohne SetNextAvailableDroneActive(int id) {
 		boolean isAvailable = false;
-		while(!isAvailable)
+		int repetition = 0;
+		nextDroneAvailableTime = new DateTime();
+		while(!isAvailable && repetition <= 5)
 		{
 			if(drones[id].getReturnTime() == null || drones[id].getReturnTime().isBefore(simTime))
 			{
@@ -120,8 +134,21 @@ public class TestServiceImpl implements TestService {
 			}
 			else
 			{
+				if(drones[id].getReturnTime().isBefore(nextDroneAvailableTime))
+				{
+					nextDroneAvailableTime = drones[id].getReturnTime();
+					nextDroneAvailableId = id;
+				}
+				if(id == 4)
+				{
+					id = 0;
+				}
+				else
+				{
 				id++;
+				}
 			}
+			repetition++;
 		}
 		return null; //Error display, that no drones are available
 	}
@@ -137,6 +164,7 @@ public class TestServiceImpl implements TestService {
 		CheckMaximumTime();
 		}
 		activeDrone.start(simTime);
+		droneService.save(activeDrone);
 	}
 
 	private void AddMinute() {
@@ -145,10 +173,18 @@ public class TestServiceImpl implements TestService {
 		{
 			droneReturnTime.plusMinutes(1);
 		}
+		if (activeDrone == null)
+		{
+			if(!simTime.isBefore(nextDroneAvailableTime))
+			{
+				activeDrone = drones[nextDroneAvailableId];
+				activeDrone.resetDrone();
+			}
+		}
 	}
 	
 	private void AddOrder() {
-		while(nextOrder < incOrders.length && simTime.equals(incOrders[nextOrder].getOrderDate())) 
+		while(activeDrone != null && nextOrder < incOrders.length && simTime.isAfter(incOrders[nextOrder].getOrderDate())) 
 		{
 			if(incOrders[nextOrder].getWeight() > 4.0)
 			{
@@ -162,9 +198,17 @@ public class TestServiceImpl implements TestService {
 			else
 			{
 				activeDrone.start(simTime);
+				droneService.save(activeDrone);
 				SetNextDroneActive();
-				calcDroneRoutes(incOrders[nextOrder]);
-				addPackage(activeDrone, incOrders[nextOrder]);
+				if(activeDrone != null)
+				{
+					calcDroneRoutes(incOrders[nextOrder]);
+					addPackage(activeDrone, incOrders[nextOrder]);
+				}
+				else
+				{
+					nextOrder--;
+				}
 			}	
 			nextOrder++;
 		}

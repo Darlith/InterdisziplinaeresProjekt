@@ -134,14 +134,14 @@ public class Drohne {
 	{
 		for(Order o : this.orders)
 		{
-			ProcessedOrder po = new ProcessedOrder(o.getId(), o.getOrderDate(), o.getLocation(), o.getWeight(), simTime, this.id);
+//			ProcessedOrder po = new ProcessedOrder(o.getId(), o.getOrderDate(), o.getLocation(), o.getWeight(), simTime, this.id);
 			for(Route r : this.route)
 			{
 				if(r.getDestinationOrderLocation().getOrderID() == o.getId())
 				{
 					int minutes = (int) Math.floor(r.getDistance());
 					int seconds = (int) Math.floor((r.getDistance() - minutes)*60);
-					po.setDeliveryDate(simTime.plusMinutes(minutes).plusSeconds(seconds));
+//					po.setDeliveryDate(simTime.plusMinutes(minutes).plusSeconds(seconds));
 				}
 			}
 		}
