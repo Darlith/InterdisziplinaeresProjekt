@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.eufh.drohne.business.service.impl.Route;
 
@@ -132,28 +134,48 @@ public class Drohne {
 
 	public void start(DateTime simTime)
 	{
+		List<ProcessedOrder> poList = new ArrayList<ProcessedOrder>();
 		for(Order o : this.orders)
 		{
-//			ProcessedOrder po = new ProcessedOrder(o.getId(), o.getOrderDate(), o.getLocation(), o.getWeight(), simTime, this.id);
+			ProcessedOrder po = new ProcessedOrder(o.getId(), o.getOrderDate(), o.getLocation(), o.getWeight(), simTime, this.id);
 			for(Route r : this.route)
 			{
 				if(r.getDestinationOrderLocation().getOrderID() == o.getId())
 				{
 					int minutes = (int) Math.floor(r.getDistance());
 					int seconds = (int) Math.floor((r.getDistance() - minutes)*60);
-//					po.setDeliveryDate(simTime.plusMinutes(minutes).plusSeconds(seconds));
+					po.setDeliveryDate(simTime.plusMinutes(minutes).plusSeconds(seconds));
 				}
 			}
+			poList.add(po);
 		}
 		//return an Frontend
 		//TEST CODE
-		System.out.println("Drohne gestartet um " + simTime.toString() + " mit" + this.packageCount + "Paketen mit " 
-		+ this.totalPackageWeight + "Kilo auf einer Strecke von " + this.totalDistance + "\\. Sie wird um " + this.returnTime.toString() 
-				+ " zurückerwartet. Es werden folgende Orte beliefert: ");
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss");
+		System.out.println("-------------------------------------------------------------------------------");
+		System.out.printf("Drohne "+ this.id + " gestartet am " + fmt.print(simTime) + " mit " + this.packageCount + " Paket(en) mit " 
+		+ this.totalPackageWeight + " Kilo auf einer Strecke von %.3f km.", this.totalDistance);
+		System.out.println();
+		System.out.println("Sie wird am " + fmt.print(simTime) + " zurückerwartet. Es werden folgende Orte beliefert: ");
 		for(int i = 0; i < route.size() -1; i++)
 		{
-			System.out.println(route.get(i).getDestinationOrderLocation().getAddress());
+			System.out.print((i+1) + ". " + route.get(i).getDestinationOrderLocation().getAddress());
+			for(ProcessedOrder po : poList)
+			{
+				if(po.getId() == route.get(i).getDestinationOrderLocation().getOrderID())
+				{
+					if(po.isDelayed())
+					{
+						System.out.print(" DELAYED\n");
+					}
+					else
+					{
+						System.out.print("\n");
+					}
+				}
+			}
 		}
+		
 	}
 
 	@Override

@@ -32,10 +32,11 @@ public class TestServiceImpl implements TestService {
 	private TestService testService;
 	private DroneService droneService;
 	private DateTime droneReturnTime;
-	List<Route> bestRoute;
-	double bestDistance;
-	DateTime nextDroneAvailableTime;
-	int nextDroneAvailableId;
+	private List<Route> bestRoute;
+	private double bestDistance;
+	private DateTime nextDroneAvailableTime;
+	private int nextDroneAvailableId;
+	private int dronePointer;
 	
 	public TestServiceImpl(TestRepository repo, TestService testService, DroneService droneService) {
 		this.testRepository = repo;
@@ -84,6 +85,7 @@ public class TestServiceImpl implements TestService {
 		{
 			droneService.save(drone);
 		}
+		this.dronePointer = drones[0].getId();
 		SetNextDroneActive();
 		setSimTime();
 		
@@ -105,9 +107,9 @@ public class TestServiceImpl implements TestService {
 
 	private void SetNextDroneActive() {
 		int id;
-		if (activeDrone == null || (id = activeDrone.getId()) == 5)
+		if (activeDrone == null || (id = activeDrone.getId()) == (dronePointer + 5))
 		{
-			this.activeDrone = SetNextAvailableDroneActive(0);
+			this.activeDrone = SetNextAvailableDroneActive(dronePointer);
 		}
 		else
 		{
@@ -123,12 +125,14 @@ public class TestServiceImpl implements TestService {
 	}
 
 	private Drohne SetNextAvailableDroneActive(int id) {
+		id -= dronePointer;
 		boolean isAvailable = false;
 		int repetition = 0;
 		nextDroneAvailableTime = new DateTime();
 		while(!isAvailable && repetition <= 5)
 		{
-			if(drones[id].getReturnTime() == null || drones[id].getReturnTime().isBefore(simTime))
+			if(drones[id].getReturnTime() == null 
+					|| drones[id].getReturnTime().isBefore(simTime) || drones[id].getReturnTime().isEqual(simTime))
 			{
 				return drones[id];
 			}
@@ -150,7 +154,7 @@ public class TestServiceImpl implements TestService {
 			}
 			repetition++;
 		}
-		return null; //Error display, that no drones are available
+		return null; //if no drones are available
 	}
 
 	private void setSimTime() {
@@ -165,6 +169,10 @@ public class TestServiceImpl implements TestService {
 		}
 		activeDrone.start(simTime);
 		droneService.save(activeDrone);
+		//TEST TODO PHKO: REMOVE
+		System.out.println("========================================================================================");
+		System.out.println("========================================================================================");
+		//TEST
 	}
 
 	private void AddMinute() {
@@ -184,7 +192,8 @@ public class TestServiceImpl implements TestService {
 	}
 	
 	private void AddOrder() {
-		while(activeDrone != null && nextOrder < incOrders.length && simTime.isAfter(incOrders[nextOrder].getOrderDate())) 
+		while(activeDrone != null && nextOrder < incOrders.length && 
+				(simTime.isEqual(incOrders[nextOrder].getOrderDate()) || simTime.isAfter(incOrders[nextOrder].getOrderDate()))) 
 		{
 			if(incOrders[nextOrder].getWeight() > 4.0)
 			{
