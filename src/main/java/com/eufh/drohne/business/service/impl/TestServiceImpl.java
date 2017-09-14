@@ -73,7 +73,7 @@ public class TestServiceImpl implements TestService {
 				"20.01.2017, 08:05, Kingsbridge, 2.7",
 				"20.01.2017, 08:07, Strete, 3.2",
 				"20.01.2017, 08:08, Churchstow, 1.6",
-				"20.01.2017, 08:10, Hope Cove, 2.0",
+				"20.01.2017, 08:10, Hope, 2.0",
 				"20.01.2017, 08:11, Malborough, 1.5",
 				"20.01.2017, 08:11, Bigbury, 2.3"};
 		this.incOrders = new Order[input.length];
@@ -199,11 +199,18 @@ public class TestServiceImpl implements TestService {
 			{
 				//TODO: Paket ist schwerer als erlaubt, Error display
 			}
-			if((activeDrone.getTotalPackageWeight() + incOrders[nextOrder].getWeight()) <= 4.0 && calcDroneRoutes(incOrders[nextOrder]))
+			//Calculation may provide 3 states : success, failure or error. (1, 0, -1)
+			int calcResult  = 0;
+			if((activeDrone.getTotalPackageWeight() + incOrders[nextOrder].getWeight()) <= 4.0 
+					&& (calcResult = calcDroneRoutes(incOrders[nextOrder])) == 1)
 			{
 				addPackage(activeDrone, incOrders[nextOrder]);
 			}
 			// TODO: else Starte aktive Drohne und f�ge aktuelles Paket zu neuer Drohne hinzu
+			else if(calcResult == -1)
+			{
+				//No code will be executed on if illegal adresses are input and the order will be ignored.
+			}
 			else
 			{
 				activeDrone.start(simTime);
@@ -243,7 +250,7 @@ public class TestServiceImpl implements TestService {
 	
 
 	//TODO PHKO: Weiterentwickeln, Schnittstelle zum Frontend und Datenbank bilden
-	private boolean calcDroneRoutes(Order currentOrder) {
+	private int calcDroneRoutes(Order currentOrder) {
 		List<OrderLocation> orderLocations = new ArrayList<OrderLocation>();
 		List<OrderLocation> currentOrderLocations = new ArrayList<OrderLocation>();
 		List<Route> routes = new ArrayList<Route>();
@@ -282,11 +289,25 @@ public class TestServiceImpl implements TestService {
 					OrderLocation o = queryOrderLocations.get(i);
 					LatLng latLng = getLatLng(o.getAddress());
 					o.setLatlng(latLng);
+					double distance = Haversine.getDistance(currentOrderLocations.get(0).getLatlng().lat,currentOrderLocations.get(0).getLatlng().lng,
+							latLng.lat, latLng.lng);
+					if( distance > 25.0)
+					{
+						throw new IllegalArgumentException(o.getAddress());
+					}
 					currentOrderLocations.add(o);
 					Coordinates c = new Coordinates(o.getAddress(), o.getLatlng().lat, o.getLatlng().lng);
 					testService.save(c);
 				}
-			} catch (Exception e) {
+			}
+			catch (IllegalArgumentException ie)
+			{
+				System.out.println("-------------------------------------------------------------------------------");
+				System.out.println("Der Bestellort \"" + ie.getMessage() + "\" ist nicht innerhalb des 25km Lieferradius und wir daher nicht ausgeliefert.");
+				System.out.println("-------------------------------------------------------------------------------");
+				return -1;
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -296,6 +317,10 @@ public class TestServiceImpl implements TestService {
 			{
 				double distance = Haversine.getDistance(currentOrderLocations.get(i).getLatlng().lat,currentOrderLocations.get(i).getLatlng().lng,
 						currentOrderLocations.get(j).getLatlng().lat, currentOrderLocations.get(j).getLatlng().lng);
+				if (distance > 50.0)
+				{
+					throw new IndexOutOfBoundsException();
+				}
 				DateTime originOrderDate = null;
 				DateTime destinationOrderDate = null;
 				if(currentOrderLocations.get(i).getAddress() != "Salcombe")
@@ -529,11 +554,11 @@ public class TestServiceImpl implements TestService {
 		//TODO Werte festhalten f�r Validierungen
 		if (bestDistance > 50.0  || !willAllDeliveriesBeInTime(simTime, bestRoute))
 		{
-			return false;
+			return 0;
 		}
 		else
 		{
-			return true;
+			return 1;
 		}
 	}
 	private boolean willAllDeliveriesBeInTime(DateTime time, List<Route> bestRoute) {
