@@ -73,7 +73,7 @@ public class TestServiceImpl implements TestService {
 				"20.01.2017, 08:05, Kingsbridge, 2.7",
 				"20.01.2017, 08:07, Strete, 3.2",
 				"20.01.2017, 08:08, Churchstow, 1.6",
-				"20.01.2017, 08:10, Hope, 2.0",
+				"20.01.2017, 08:10, Hope Cove, 2.0",
 				"20.01.2017, 08:11, Malborough, 1.5",
 				"20.01.2017, 08:11, Bigbury, 2.3"};
 		this.incOrders = new Order[input.length];
