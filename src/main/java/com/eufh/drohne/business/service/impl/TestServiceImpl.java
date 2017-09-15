@@ -75,7 +75,41 @@ public class TestServiceImpl implements TestService {
 				"20.01.2017, 08:08, Churchstow, 1.6",
 				"20.01.2017, 08:10, Hope Cove, 2.0",
 				"20.01.2017, 08:11, Malborough, 1.5",
-				"20.01.2017, 08:11, Bigbury, 2.3"};
+				"20.01.2017, 08:11, Bigbury, 2.3",
+				"20.01.2017, 08:14, Thurlestone, 1.2",
+				"20.01.2017, 08:20, Kellaton, 3.1",
+				"20.01.2017, 08:24, Aveton Gifford, 2.7",
+				"20.01.2017, 08:28, Sherford, 1.3",
+				"20.01.2017, 08:30, East Prawle, 2.0",
+				"20.01.2017, 08:31, Strete, 1.2",
+				"20.01.2017, 08:32, South Milton, 0.9",
+				"20.01.2017, 08:34, Malborough, 1.2",
+				"20.01.2017, 08:35, West Charleton, 1.4",
+				"20.01.2017, 08:35, Hope Cove, 1.8"/*, 
+				"20.01.2017, 08:37, Sherford, 3,8"
+				"20.01.2017, 08:38, Aveton Gifford, 3.6",
+				"20.01.2017, 08:39, Strete, 2.9",
+				"20.01.2017, 08:41, Beesands, 2.5",
+				"20.01.2017, 08:42, East Prawle, 1.7",
+				"20.01.2017, 08:42, Kingsbridge, 2.7",
+				"20.01.2017, 08:43, Strete, 3.2",
+				"20.01.2017, 08:43, Churchstow, 1.6",
+				"20.01.2017, 08:44, Hope Cove, 2.7",
+				"20.01.2017, 08:44, Malborough, 1.4",
+				"20.01.2017, 08:45, Bigbury, 1.3",
+				"20.01.2017, 08:45, Thurlestone, 3.2",
+				"20.01.2017, 08:46, Kellaton, 3.3",
+				"20.01.2017, 08:48, Aveton Gifford, 1.7",
+				"20.01.2017, 08:50, Sherford, 0.3",
+				"20.01.2017, 08:51, East Prawle, 1.0",
+				"20.01.2017, 08:51, Sherford, 1.3",
+				"20.01.2017, 08:53, East Prawle, 2.1",
+				"20.01.2017, 08:54, Strete, 3.2",
+				"20.01.2017, 08:56, South Milton, 0.5",
+				"20.01.2017, 08:58, Malborough, 1.4",
+				"20.01.2017, 08:59, West Charleton, 2.4",
+				"20.01.2017, 08:59, Hope Cove, 0.8"			*/
+				};
 		this.incOrders = new Order[input.length];
 		CreateOrderByList(input);
 		this.nextOrder = 0;
