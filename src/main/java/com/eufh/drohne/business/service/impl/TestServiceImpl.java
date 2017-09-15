@@ -85,8 +85,8 @@ public class TestServiceImpl implements TestService {
 				"20.01.2017, 08:32, South Milton, 0.9",
 				"20.01.2017, 08:34, Malborough, 1.2",
 				"20.01.2017, 08:35, West Charleton, 1.4",
-				"20.01.2017, 08:35, Hope Cove, 1.8"/*, 
-				"20.01.2017, 08:37, Sherford, 3,8"
+				"20.01.2017, 08:35, Hope Cove, 1.8", 
+				"20.01.2017, 08:37, Sherford, 3.8",
 				"20.01.2017, 08:38, Aveton Gifford, 3.6",
 				"20.01.2017, 08:39, Strete, 2.9",
 				"20.01.2017, 08:41, Beesands, 2.5",
@@ -108,7 +108,7 @@ public class TestServiceImpl implements TestService {
 				"20.01.2017, 08:56, South Milton, 0.5",
 				"20.01.2017, 08:58, Malborough, 1.4",
 				"20.01.2017, 08:59, West Charleton, 2.4",
-				"20.01.2017, 08:59, Hope Cove, 0.8"			*/
+				"20.01.2017, 08:59, Hope Cove, 0.8"			
 				};
 		this.incOrders = new Order[input.length];
 		CreateOrderByList(input);
@@ -162,7 +162,6 @@ public class TestServiceImpl implements TestService {
 		id -= dronePointer;
 		boolean isAvailable = false;
 		int repetition = 0;
-		nextDroneAvailableTime = new DateTime();
 		while(!isAvailable && repetition <= 5)
 		{
 			if(drones[id].getReturnTime() == null 
@@ -213,7 +212,7 @@ public class TestServiceImpl implements TestService {
 		simTime = simTime.plusMinutes(1);
 		if(droneReturnTime != null)
 		{
-			droneReturnTime.plusMinutes(1);
+			droneReturnTime = droneReturnTime.plusMinutes(1);
 		}
 		if (activeDrone == null)
 		{
@@ -596,8 +595,8 @@ public class TestServiceImpl implements TestService {
 		}
 	}
 	private boolean willAllDeliveriesBeInTime(DateTime time, List<Route> bestRoute) {
-		DateTime deliveryTime = new DateTime(time.getYear(), time.getMonthOfYear(), time.getDayOfMonth(),
-				time.getHourOfDay(), time.getMinuteOfHour() + 5, time.getSecondOfMinute());
+		DateTime deliveryTime = time.plusMinutes(5);
+		
 		for(Route bRoute : bestRoute)
 		{
 			double distance = bRoute.getDistance();

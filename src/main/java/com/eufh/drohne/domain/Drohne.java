@@ -39,6 +39,8 @@ public class Drohne {
 	@Transient
 	private List<Route> route;
 	@Transient
+	private DateTime startTime;
+	@Transient
 	private DateTime returnTime;
 	
 	
@@ -131,9 +133,15 @@ public class Drohne {
 	{
 		return this.route;
 	}
+	
+
+	public DateTime getStartTime() {
+		return startTime;
+	}
 
 	public void start(DateTime simTime)
 	{
+		this.startTime = simTime.plusMinutes(5); // 5 minutes packaging time
 		List<ProcessedOrder> poList = new ArrayList<ProcessedOrder>();
 		for(Order o : this.orders)
 		{
@@ -153,7 +161,7 @@ public class Drohne {
 		//TEST CODE
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss");
 		System.out.println("-------------------------------------------------------------------------------");
-		System.out.printf("Drohne "+ this.id + " gestartet am " + fmt.print(simTime) + " mit " + this.packageCount + " Paket(en) mit " 
+		System.out.printf("Drohne "+ this.id + " gestartet am " + fmt.print(this.startTime) + " mit " + this.packageCount + " Paket(en) mit " 
 		+ this.totalPackageWeight + " Kilo auf einer Strecke von %.3f km.", this.totalDistance);
 		System.out.println();
 		System.out.println("Sie wird am " + fmt.print(this.returnTime) + " zurückerwartet. Es werden folgende Orte beliefert: ");
