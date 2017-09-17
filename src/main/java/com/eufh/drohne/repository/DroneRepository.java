@@ -11,10 +11,11 @@ import com.eufh.drohne.domain.Coordinates;
 import com.eufh.drohne.domain.Drohne;
 
 @Component
-public interface DroneRepository extends Repository<Drohne, String> {
+public interface DroneRepository extends Repository<Drohne, Integer> {
 
 	ArrayList<Drohne> findAll();
 	
 	Drohne save(Drohne drohne);
 	
+	Drohne findOne(Integer id);
 }

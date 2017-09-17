@@ -34,6 +34,11 @@ public class DroneServiceImpl implements DroneService {
 	public ArrayList<Drohne> findAll() {
 		return droneRepository.findAll();
 	}
+	
+	@Override
+	public Drohne findOne(Integer id) {
+		return droneRepository.findOne(id);
+	}
 
 	@Override
 	@Transactional

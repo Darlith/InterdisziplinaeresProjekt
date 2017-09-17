@@ -24,8 +24,7 @@ public class TestServiceImpl implements TestService {
 	
 	private GeoApiContext geoContext;
 	private DateTime simTime;
-	private Order[] incOrders;
-	private int nextOrder;
+	private List<Order> incOrders;
 	private Drohne[] drones;
 	private Drohne activeDrone;
 	private TestRepository testRepository;
@@ -37,6 +36,7 @@ public class TestServiceImpl implements TestService {
 	private DateTime nextDroneAvailableTime;
 	private int nextDroneAvailableId;
 	private int dronePointer;
+	private Iterator<Order> orderIterator;
 	
 	public TestServiceImpl(TestRepository repo, TestService testService, DroneService droneService) {
 		this.testRepository = repo;
@@ -110,21 +110,37 @@ public class TestServiceImpl implements TestService {
 				"20.01.2017, 08:59, West Charleton, 2.4",
 				"20.01.2017, 08:59, Hope Cove, 0.8"			
 				};
-		this.incOrders = new Order[input.length];
+		this.incOrders = new ArrayList<Order>();
 		CreateOrderByList(input);
-		this.nextOrder = 0;
 		this.bestRoute = new ArrayList<Route>();
 		this.drones = new Drohne[] {new Drohne(), new Drohne(), new Drohne(), new Drohne(), new Drohne()};
 		for(Drohne drone: drones)
 		{
 			droneService.save(drone);
 		}
-		this.dronePointer = drones[0].getId();
+		this.dronePointer = drones[0].getId() - 1;
 		SetNextDroneActive();
 		setSimTime();
 		
 		
 		Simulate();
+	}
+	
+	private void Simulate() {
+		while (incOrders.size() > 0) {
+		AddMinute();
+		AddOrder();
+		CheckMaximumTime();
+		}
+		if(activeDrone != null)
+		{
+			activeDrone.start(simTime);
+			droneService.save(activeDrone);
+		}
+		//TEST TODO PHKO: REMOVE
+		System.out.println("========================================================================================");
+		System.out.println("========================================================================================");
+		//TEST
 	}
 
 	private void CreateOrderByList(String[] input) { 
@@ -135,13 +151,13 @@ public class TestServiceImpl implements TestService {
 			DateTime orderDate = new DateTime(Integer.parseInt(date[2]), Integer.parseInt(date[1]), 
 					Integer.parseInt(date[0]), Integer.parseInt(time[0]), Integer.parseInt(time[1]));
 			double weight = Double.parseDouble(orderArr[3].trim());
-			this.incOrders[i] = new Order(orderDate, orderArr[2].trim(), weight);
+			this.incOrders.add(new Order(orderDate, orderArr[2].trim(), weight));
 		}
 	}
 
 	private void SetNextDroneActive() {
 		int id;
-		if (activeDrone == null || (id = activeDrone.getId()) == (dronePointer + 5))
+		if (activeDrone == null || (id = activeDrone.getId()) == (dronePointer + drones.length))
 		{
 			this.activeDrone = SetNextAvailableDroneActive(dronePointer);
 		}
@@ -160,9 +176,11 @@ public class TestServiceImpl implements TestService {
 
 	private Drohne SetNextAvailableDroneActive(int id) {
 		id -= dronePointer;
+		this.nextDroneAvailableTime = drones[id].getReturnTime();
+		this.nextDroneAvailableId = drones[id].getId();
 		boolean isAvailable = false;
 		int repetition = 0;
-		while(!isAvailable && repetition <= 5)
+		while(!isAvailable && repetition <= drones.length)
 		{
 			if(drones[id].getReturnTime() == null 
 					|| drones[id].getReturnTime().isBefore(simTime) || drones[id].getReturnTime().isEqual(simTime))
@@ -174,9 +192,9 @@ public class TestServiceImpl implements TestService {
 				if(drones[id].getReturnTime().isBefore(nextDroneAvailableTime))
 				{
 					nextDroneAvailableTime = drones[id].getReturnTime();
-					nextDroneAvailableId = id;
+					nextDroneAvailableId = drones[id].getId();
 				}
-				if(id == 4)
+				if(id == (drones.length - 1))
 				{
 					id = 0;
 				}
@@ -191,21 +209,7 @@ public class TestServiceImpl implements TestService {
 	}
 
 	private void setSimTime() {
-		simTime = incOrders[0].getOrderDate().minusMinutes(1);
-	}
-
-	private void Simulate() {
-		while (nextOrder < incOrders.length) {
-		AddMinute();
-		AddOrder();
-		CheckMaximumTime();
-		}
-		activeDrone.start(simTime);
-		droneService.save(activeDrone);
-		//TEST TODO PHKO: REMOVE
-		System.out.println("========================================================================================");
-		System.out.println("========================================================================================");
-		//TEST
+		simTime = incOrders.get(0).getOrderDate().minusMinutes(1);
 	}
 
 	private void AddMinute() {
@@ -218,48 +222,57 @@ public class TestServiceImpl implements TestService {
 		{
 			if(!simTime.isBefore(nextDroneAvailableTime))
 			{
-				activeDrone = drones[nextDroneAvailableId];
+				activeDrone = droneService.findOne(nextDroneAvailableId);
 				activeDrone.resetDrone();
 			}
 		}
 	}
 	
 	private void AddOrder() {
-		while(activeDrone != null && nextOrder < incOrders.length && 
-				(simTime.isEqual(incOrders[nextOrder].getOrderDate()) || simTime.isAfter(incOrders[nextOrder].getOrderDate()))) 
+		boolean checkNextDrone = true;		
+		while(activeDrone != null && checkNextDrone)
 		{
-			if(incOrders[nextOrder].getWeight() > 4.0)
+			checkNextDrone = false;
+			boolean startDrone = false;
+			orderIterator = incOrders.iterator();
+			while(orderIterator.hasNext())
 			{
-				//TODO: Paket ist schwerer als erlaubt, Error display
+				Order order = orderIterator.next();
+				if (simTime.isEqual(order.getOrderDate()) 
+						|| simTime.isAfter(order.getOrderDate()))
+				{
+					int calcResult  = 0;
+					if(order.getWeight() > 4.0)
+					{
+						//TODO: Paket ist schwerer als erlaubt, Error display
+						orderIterator.remove();
+					}
+					//Calculation may provide 3 states : success, failure or error. (1, 0, -1)
+					else if((activeDrone.getTotalPackageWeight() + order.getWeight()) <= 4.0 
+							&& (calcResult = calcDroneRoutes(order)) == 1)
+					{
+						addPackage(activeDrone, order);
+						orderIterator.remove();
+					}
+					// TODO: else Starte aktive Drohne und f�ge aktuelles Paket zu neuer Drohne hinzu
+					else if(calcResult == -1)
+					{
+						orderIterator.remove();
+						//No code will be executed on if illegal adresses are input and the order will be ignored.
+					}
+					else
+					{
+						startDrone = true;
+					}	
+				}
 			}
-			//Calculation may provide 3 states : success, failure or error. (1, 0, -1)
-			int calcResult  = 0;
-			if((activeDrone.getTotalPackageWeight() + incOrders[nextOrder].getWeight()) <= 4.0 
-					&& (calcResult = calcDroneRoutes(incOrders[nextOrder])) == 1)
-			{
-				addPackage(activeDrone, incOrders[nextOrder]);
-			}
-			// TODO: else Starte aktive Drohne und f�ge aktuelles Paket zu neuer Drohne hinzu
-			else if(calcResult == -1)
-			{
-				//No code will be executed on if illegal adresses are input and the order will be ignored.
-			}
-			else
+			if(startDrone)
 			{
 				activeDrone.start(simTime);
 				droneService.save(activeDrone);
 				SetNextDroneActive();
-				if(activeDrone != null)
-				{
-					calcDroneRoutes(incOrders[nextOrder]);
-					addPackage(activeDrone, incOrders[nextOrder]);
-				}
-				else
-				{
-					nextOrder--;
-				}
-			}	
-			nextOrder++;
+				checkNextDrone = true;
+			}
 		}
 	}
 
@@ -273,7 +286,7 @@ public class TestServiceImpl implements TestService {
 	private void CheckMaximumTime() {
 		if(bestRoute != null)
 		{
-			if(!willAllDeliveriesBeInTime(simTime.plusMinutes(1), bestRoute))
+			if(!willAllDeliveriesBeInTime(simTime.plusMinutes(1)))
 			{
 				activeDrone.start(simTime);
 				SetNextDroneActive();
@@ -314,7 +327,8 @@ public class TestServiceImpl implements TestService {
 		}
 		if(!queryOrderLocations.isEmpty())
 		{
-			geoContext = new GeoApiContext.Builder().apiKey("AIzaSyDMPJ3sP0kzCvOtV2PPxUfgL0axoQff-mM").build();
+			if(geoContext == null)
+				geoContext = new GeoApiContext.Builder().apiKey("AIzaSyDMPJ3sP0kzCvOtV2PPxUfgL0axoQff-mM").build();
 			try {
 				//TODO: Initialize mit 0, sobald die bekannten LatLngs in der DB sind
 				for (int i = 0; i < queryOrderLocations.size(); i++)
@@ -567,10 +581,41 @@ public class TestServiceImpl implements TestService {
 				bestRoute = currentRoute;
 			}
 		}
-		//Route umkehren, falls Termine nicht eingehalten werden k�nnen
-		if(!willAllDeliveriesBeInTime(simTime, bestRoute))
+		if (bestDistance > 50.0)  //|| !willAllDeliveriesBeInTime(simTime, bestRoute))
 		{
-			List<Route> tempRoute = bestRoute;
+			return 0;
+		}
+		//calc deliveryTime and reverse the route if less deliveries will be delayed this way.
+		reverseRouteIfNecessary(routes);
+		return 1;
+	}
+	private void reverseRouteIfNecessary(List<Route> routes)
+	{
+		DateTime deliveryTime = simTime.plusMinutes(5);
+		int deliveriesNotInTime = 0;
+		
+		for(Route bRoute : bestRoute)
+		{
+			double distance = bRoute.getDistance();
+			int minutes = (int) Math.floor(distance);
+			deliveryTime = deliveryTime.plusMinutes(minutes);
+			distance -= minutes;
+			int seconds = (int) Math.floor(distance * 60);
+			deliveryTime = deliveryTime.plusSeconds(seconds);
+			if(bRoute.getDestinationOrderDate() != null && !deliveryTime.isBefore(bRoute.getDestinationOrderDate().plusHours(1)))
+					{
+						deliveriesNotInTime++;
+					}
+		}
+		if(deliveriesNotInTime > 0)
+		{
+			int tempNotInTime = 0;
+			DateTime tempTime = simTime.plusMinutes(5);
+			List<Route> tempRoute = new ArrayList<Route>();
+			for(Route b: bestRoute)
+			{
+				tempRoute.add(b);
+			}
 			for(int i = 0; i < bestRoute.size(); i++)
 			{
 				for (Route route : routes)
@@ -582,22 +627,31 @@ public class TestServiceImpl implements TestService {
 					}
 				}
 			}
-			bestRoute = tempRoute;
+			for(Route bRoute : tempRoute)
+			{
+				double distance = bRoute.getDistance();
+				int minutes = (int) Math.floor(distance);
+				tempTime = tempTime.plusMinutes(minutes);
+				distance -= minutes;
+				int seconds = (int) Math.floor(distance * 60);
+				tempTime = tempTime.plusSeconds(seconds);
+				if(bRoute.getDestinationOrderDate() != null && !tempTime.isBefore(bRoute.getDestinationOrderDate().plusHours(1)))
+						{
+							tempNotInTime++;
+						}
+			}
+			if(tempNotInTime < deliveriesNotInTime)
+			{
+				bestRoute = tempRoute;
+			}
 		}
-		//TODO Werte festhalten f�r Validierungen
-		if (bestDistance > 50.0  || !willAllDeliveriesBeInTime(simTime, bestRoute))
-		{
-			return 0;
-		}
-		else
-		{
-			return 1;
-		}
+		droneReturnTime = deliveryTime;
 	}
-	private boolean willAllDeliveriesBeInTime(DateTime time, List<Route> bestRoute) {
+	
+	private boolean willAllDeliveriesBeInTime(DateTime time) {
 		DateTime deliveryTime = time.plusMinutes(5);
 		
-		for(Route bRoute : bestRoute)
+		for(Route bRoute : this.bestRoute)
 		{
 			double distance = bRoute.getDistance();
 			int minutes = (int) Math.floor(distance);
@@ -610,7 +664,7 @@ public class TestServiceImpl implements TestService {
 						return false;
 					}
 		}
-		droneReturnTime = deliveryTime;
+		this.droneReturnTime = deliveryTime;
 		return true;
 	}
 	

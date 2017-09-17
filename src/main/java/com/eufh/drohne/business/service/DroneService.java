@@ -10,5 +10,7 @@ public interface DroneService {
 	ArrayList<Drohne> findAll();
 
 	Drohne save(Drohne drohne);
+	
+	Drohne findOne(Integer id);
 
 }

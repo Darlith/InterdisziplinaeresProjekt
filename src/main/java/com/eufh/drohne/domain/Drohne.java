@@ -71,7 +71,10 @@ public class Drohne {
 		order.setDrone(this);
 		this.orders.add(order);
 		this.packageCount++;
-		this.totalPackageWeight += order.getWeight();
+		//Converting to Integer to avoid Floating Point Error
+		int weight = (int)(order.getWeight() * 10);
+		int totalWeight = (int)(this.totalPackageWeight * 10);
+		this.totalPackageWeight = ((double)weight + totalWeight) / 10.0;
 	}
 	
 	public void removePackage(Order order) {
@@ -87,6 +90,7 @@ public class Drohne {
 		this.orders.clear();
 		this.route.clear();
 		this.returnTime = null;
+		this.startTime = null;
 	}
 	
 	public Drohne findDroneById(int id)
@@ -168,6 +172,7 @@ public class Drohne {
 		for(int i = 0; i < route.size() -1; i++)
 		{
 			System.out.print((i+1) + ". " + route.get(i).getDestinationOrderLocation().getAddress());
+			System.out.print(" (id=" + route.get(i).getDestinationOrderLocation().getOrderID() + ")");
 			for(ProcessedOrder po : poList)
 			{
 				if(po.getId() == route.get(i).getDestinationOrderLocation().getOrderID())
