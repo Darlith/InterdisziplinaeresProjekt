@@ -31,8 +31,8 @@ public class TestServiceImpl implements TestService {
 	private TestService testService;
 	private DroneService droneService;
 	private DateTime droneReturnTime;
-	private List<Route> bestRoute;
-	private double bestDistance;
+	private List<Route> droneRoute;
+	private double droneDistance;
 	private DateTime nextDroneAvailableTime;
 	private int nextDroneAvailableId;
 	private int dronePointer;
@@ -112,7 +112,6 @@ public class TestServiceImpl implements TestService {
 				};
 		this.incOrders = new ArrayList<Order>();
 		CreateOrderByList(input);
-		this.bestRoute = new ArrayList<Route>();
 		this.drones = new Drohne[] {new Drohne(), new Drohne(), new Drohne(), new Drohne(), new Drohne()};
 		for(Drohne drone: drones)
 		{
@@ -169,8 +168,8 @@ public class TestServiceImpl implements TestService {
 		{
 			activeDrone.resetDrone();
 		}
-		this.bestDistance = 0.0;
-		this.bestRoute = null;
+		this.droneDistance = 0.0;
+		this.droneRoute = new ArrayList<Route>();
 		this.droneReturnTime = null;
 	}
 
@@ -278,13 +277,13 @@ public class TestServiceImpl implements TestService {
 
 	private void addPackage(Drohne activeDrone, Order order) {
 		activeDrone.addPackage(order);
-		activeDrone.setTotalDistance(bestDistance);
+		activeDrone.setTotalDistance(droneDistance);
 		activeDrone.setReturnTime(droneReturnTime);
-		activeDrone.setRoute(bestRoute);
+		activeDrone.setRoute(droneRoute);
 	}
 
 	private void CheckMaximumTime() {
-		if(bestRoute != null)
+		if(droneRoute != null)
 		{
 			if(!willAllDeliveriesBeInTime(simTime.plusMinutes(1)))
 			{
@@ -401,8 +400,8 @@ public class TestServiceImpl implements TestService {
 			}	
 		}
 		//Beste Route ausw�hlen
-		bestDistance = Double.MAX_VALUE;
-		this.bestRoute = new ArrayList<Route>();
+		double bestDistance = Double.MAX_VALUE;
+		List<Route> bestRoute = new ArrayList<Route>();
 		List<ArrayList<Route>> currentRoutes = new ArrayList<ArrayList<Route>>();
 		int pointer = 0;
 		for(int i = 0; i< orders.size(); i++)
@@ -585,6 +584,15 @@ public class TestServiceImpl implements TestService {
 		{
 			return 0;
 		}
+		this.droneDistance = bestDistance;
+		if(!droneRoute.isEmpty())
+		{
+			droneRoute.clear();
+		}
+		for(Route br : bestRoute)
+		{
+			droneRoute.add(br);
+		}
 		//calc deliveryTime and reverse the route if less deliveries will be delayed this way.
 		reverseRouteIfNecessary(routes);
 		return 1;
@@ -594,7 +602,7 @@ public class TestServiceImpl implements TestService {
 		DateTime deliveryTime = simTime.plusMinutes(5);
 		int deliveriesNotInTime = 0;
 		
-		for(Route bRoute : bestRoute)
+		for(Route bRoute : droneRoute)
 		{
 			double distance = bRoute.getDistance();
 			int minutes = (int) Math.floor(distance);
@@ -612,18 +620,18 @@ public class TestServiceImpl implements TestService {
 			int tempNotInTime = 0;
 			DateTime tempTime = simTime.plusMinutes(5);
 			List<Route> tempRoute = new ArrayList<Route>();
-			for(Route b: bestRoute)
+			for(Route b: droneRoute)
 			{
 				tempRoute.add(b);
 			}
-			for(int i = 0; i < bestRoute.size(); i++)
+			for(int i = 0; i < droneRoute.size(); i++)
 			{
 				for (Route route : routes)
 				{
-					if(bestRoute.get(i).getDestinationOrderLocation().getAddress() == route.getOriginOrderLocation().getAddress() 
-							&& bestRoute.get(i).getOriginOrderLocation().getAddress() == route.getDestinationOrderLocation().getAddress())
+					if(droneRoute.get(i).getDestinationOrderLocation().getAddress() == route.getOriginOrderLocation().getAddress() 
+							&& droneRoute.get(i).getOriginOrderLocation().getAddress() == route.getDestinationOrderLocation().getAddress())
 					{
-						tempRoute.set(bestRoute.size() - 1 - i, route);
+						tempRoute.set(droneRoute.size() - 1 - i, route);
 					}
 				}
 			}
@@ -642,7 +650,7 @@ public class TestServiceImpl implements TestService {
 			}
 			if(tempNotInTime < deliveriesNotInTime)
 			{
-				bestRoute = tempRoute;
+				droneRoute = tempRoute;
 			}
 		}
 		droneReturnTime = deliveryTime;
@@ -651,7 +659,7 @@ public class TestServiceImpl implements TestService {
 	private boolean willAllDeliveriesBeInTime(DateTime time) {
 		DateTime deliveryTime = time.plusMinutes(5);
 		
-		for(Route bRoute : this.bestRoute)
+		for(Route bRoute : this.droneRoute)
 		{
 			double distance = bRoute.getDistance();
 			int minutes = (int) Math.floor(distance);
