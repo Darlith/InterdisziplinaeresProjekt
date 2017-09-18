@@ -216,6 +216,10 @@ public class TestServiceImpl implements TestService {
 		if(droneReturnTime != null)
 		{
 			droneReturnTime = droneReturnTime.plusMinutes(1);
+			if(activeDrone != null && activeDrone.getReturnTime() != null)
+			{
+			activeDrone.setReturnTime(activeDrone.getReturnTime().plusMinutes(1));
+			}
 		}
 		if (activeDrone == null)
 		{
@@ -265,7 +269,7 @@ public class TestServiceImpl implements TestService {
 					}	
 				}
 			}
-			if(startDrone)
+			if(startDrone || activeDrone.getTotalPackageWeight() >= 3.5 || this.droneDistance >= 45.0)
 			{
 				activeDrone.start(simTime);
 				droneService.save(activeDrone);
