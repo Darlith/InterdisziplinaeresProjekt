@@ -21,20 +21,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.eufh.drohne.business.service.DroneService;
+import com.eufh.drohne.business.service.ProcessedOrderService;
 import com.eufh.drohne.business.service.TestService;
 import com.eufh.drohne.business.service.impl.TestServiceImpl;
 import com.eufh.drohne.domain.Drohne;
 import com.eufh.drohne.domain.Order;
+import com.eufh.drohne.domain.ProcessedOrder;
 
 @Controller
 public class TestController {
 
 	private TestService testService;
 	private DroneService droneService;
+	private ProcessedOrderService processedOrderService;
 
-	public TestController(TestService testService, DroneService droneService) {
+	public TestController(TestService testService, DroneService droneService, ProcessedOrderService processedOrderService) {
 		this.testService = testService;
 		this.droneService = droneService;
+		this.processedOrderService = processedOrderService;
 	}
 
 	// Login form

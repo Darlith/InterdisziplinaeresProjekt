@@ -15,6 +15,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 
 import com.eufh.drohne.business.service.DroneService;
+import com.eufh.drohne.business.service.ProcessedOrderService;
 import com.eufh.drohne.business.service.TestService;
 import com.eufh.drohne.controller.TestController;
 
@@ -27,10 +28,13 @@ public class TestConfiguration {
 	
 	@Autowired
 	private DroneService droneService;
+	
+	@Autowired
+	private ProcessedOrderService processedOrderService;
 
 	@Bean
 	public TestController testController() {
-		return new TestController(testService, droneService);
+		return new TestController(testService, droneService, processedOrderService);
 	}
 	
 }
