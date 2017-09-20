@@ -29,7 +29,7 @@ public class DemoBusinessConfig {
 	
 	@Bean
 	public TestService testService() {
-		return new TestServiceImpl(testRepository, null, null);
+		return new TestServiceImpl(testRepository, null, null, null);
 	}
 	
 	@Bean

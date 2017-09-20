@@ -16,12 +16,12 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.eufh.drohne.business.service.ProcessedOrderService;
 import com.eufh.drohne.business.service.impl.Route;
 
 @Entity
 @Table(name = "Drone")
 public class Drohne {
-	
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -143,7 +143,7 @@ public class Drohne {
 		return startTime;
 	}
 
-	public void start(DateTime simTime)
+	public List<ProcessedOrder> start(DateTime simTime)
 	{
 		this.startTime = simTime.plusMinutes(5); // 5 minutes packaging time
 		List<ProcessedOrder> poList = new ArrayList<ProcessedOrder>();
@@ -160,6 +160,7 @@ public class Drohne {
 				}
 			}
 			poList.add(po);
+			
 		}
 		//return an Frontend
 		//TEST CODE
@@ -188,7 +189,7 @@ public class Drohne {
 				}
 			}
 		}
-		
+		return poList;
 	}
 
 	@Override

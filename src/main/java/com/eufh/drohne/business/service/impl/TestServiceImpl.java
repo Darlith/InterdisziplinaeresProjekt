@@ -9,10 +9,12 @@ import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.eufh.drohne.business.service.DroneService;
+import com.eufh.drohne.business.service.ProcessedOrderService;
 import com.eufh.drohne.business.service.TestService;
 import com.eufh.drohne.domain.Drohne;
 import com.eufh.drohne.domain.Coordinates;
 import com.eufh.drohne.domain.Order;
+import com.eufh.drohne.domain.ProcessedOrder;
 import com.eufh.drohne.repository.DroneRepository;
 import com.eufh.drohne.repository.TestRepository;
 import com.google.maps.GeoApiContext;
@@ -30,6 +32,7 @@ public class TestServiceImpl implements TestService {
 	private TestRepository testRepository;
 	private TestService testService;
 	private DroneService droneService;
+	private ProcessedOrderService processedOrderService;
 	private DateTime droneReturnTime;
 	private List<Route> droneRoute;
 	private double droneDistance;
@@ -38,10 +41,12 @@ public class TestServiceImpl implements TestService {
 	private int dronePointer;
 	private Iterator<Order> orderIterator;
 	
-	public TestServiceImpl(TestRepository repo, TestService testService, DroneService droneService) {
+	public TestServiceImpl(TestRepository repo, TestService testService, DroneService droneService,
+			ProcessedOrderService processedOrderService) {
 		this.testRepository = repo;
 		this.testService = testService;
 		this.droneService = droneService;
+		this.processedOrderService = processedOrderService;
 	}
 
 	@Override
@@ -133,13 +138,21 @@ public class TestServiceImpl implements TestService {
 		}
 		if(activeDrone != null)
 		{
-			activeDrone.start(simTime);
-			droneService.save(activeDrone);
+			startDrone();
 		}
 		//TEST TODO PHKO: REMOVE
 		System.out.println("========================================================================================");
 		System.out.println("========================================================================================");
 		//TEST
+	}
+
+	private void startDrone() {
+		List<ProcessedOrder> poList = activeDrone.start(simTime);
+		for(ProcessedOrder po : poList)
+		{
+			processedOrderService.save(po);
+		}
+		droneService.save(activeDrone);
 	}
 
 	private void CreateOrderByList(String[] input) { 
@@ -271,8 +284,7 @@ public class TestServiceImpl implements TestService {
 			}
 			if(startDrone || activeDrone.getTotalPackageWeight() >= 3.5 || this.droneDistance >= 45.0)
 			{
-				activeDrone.start(simTime);
-				droneService.save(activeDrone);
+				startDrone();
 				SetNextDroneActive();
 				checkNextDrone = true;
 			}
@@ -291,7 +303,7 @@ public class TestServiceImpl implements TestService {
 		{
 			if(!willAllDeliveriesBeInTime(simTime.plusMinutes(1)))
 			{
-				activeDrone.start(simTime);
+				startDrone();
 				SetNextDroneActive();
 			}
 		}
