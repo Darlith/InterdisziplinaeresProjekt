@@ -68,7 +68,6 @@ public class Drohne {
 	/**
 	 * Adds a package to the drone
 	 * 
-	 * @param weight Weight of the new package
 	 */
 	public void addPackage(Order order) {
 		order.setDrone(this);
@@ -153,6 +152,7 @@ public class Drohne {
 		for(Order o : this.orders)
 		{
 			ProcessedOrder po = new ProcessedOrder(o.getId(), o.getOrderDate(), o.getLocation(), o.getWeight(), simTime, this.id);
+			String routeString = "";
 			for(Route r : this.route)
 			{
 				if(r.getDestinationOrderLocation().getOrderID() == o.getId())
@@ -161,7 +161,9 @@ public class Drohne {
 					int seconds = (int) Math.floor((r.getDistance() - minutes)*60);
 					po.setDeliveryDate(simTime.plusMinutes(minutes).plusSeconds(seconds));
 				}
+				routeString += r.getDestinationOrderLocation().getAddress() + ",";
 			}
+			po.setRoute(routeString);
 			poList.add(po);
 			
 		}

@@ -35,6 +35,9 @@ public class ProcessedOrder {
 	int droneId;
 	@Column(name = "delayed")
 	boolean delayed;
+	@Column(name = "route")
+	private String route;
+
 	
 	public ProcessedOrder() {
 		
@@ -122,6 +125,12 @@ public class ProcessedOrder {
 	public void setDelayed(boolean delayed) {
 		this.delayed = delayed;
 	}
-	
-	
+
+	public String getRoute() {
+		return route;
+	}
+
+	public void setRoute(String route) {
+		this.route = route;
+	}
 }
