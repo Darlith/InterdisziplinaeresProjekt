@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -38,9 +39,11 @@ public class Drohne {
 	public int speed = 60; // kmh
 	@Transient
 	private List<Route> route;
-	@Transient
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	@Column(name = "startTime")
 	private DateTime startTime;
-	@Transient
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	@Column(name = "returnTime")
 	private DateTime returnTime;
 	
 	
@@ -169,7 +172,7 @@ public class Drohne {
 		System.out.printf("Drohne "+ this.id + " gestartet am " + fmt.print(this.startTime) + " mit " + this.packageCount + " Paket(en) mit " 
 		+ this.totalPackageWeight + " Kilo auf einer Strecke von %.3f km.", this.totalDistance);
 		System.out.println();
-		System.out.println("Sie wird am " + fmt.print(this.returnTime) + " zurückerwartet. Es werden folgende Orte beliefert: ");
+		System.out.println("Sie wird am " + fmt.print(this.returnTime) + " zurï¿½ckerwartet. Es werden folgende Orte beliefert: ");
 		for(int i = 0; i < route.size() -1; i++)
 		{
 			System.out.print((i+1) + ". " + route.get(i).getDestinationOrderLocation().getAddress());

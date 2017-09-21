@@ -1,25 +1,34 @@
 package com.eufh.drohne.domain;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 @Table(name = "ProcessedOrder")
 public class ProcessedOrder {
 	@Id
 	private int id;
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	@Column(name = "orderDate")
 	private DateTime orderDate;
 	@Column(name = "location")
 	private String location;
 	@Column(name = "weight")
 	private double weight;
-	@Column(name = "processedDate")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Column(name = "processedDate")
 	DateTime processedDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	@Column(name = "deliveryDate")
 	DateTime deliveryDate;
 	@Column(name = "droneId")

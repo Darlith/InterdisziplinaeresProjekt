@@ -81,18 +81,17 @@
 			<artifactId>hsqldb</artifactId>
 			<version>2.4.0</version><!--$NO-MVN-MAN-VER$ -->
 		</dependency>
+		<dependency>
+			<groupId>org.jadira.usertype</groupId>
+			<artifactId>usertype.jodatime</artifactId>
+			<version>2.0.1</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.google.maps/google-maps-services -->
 		<dependency>
 			<groupId>com.google.maps</groupId>
 			<artifactId>google-maps-services</artifactId>
 			<version>0.2.1</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/haversine/haversine -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>haversine</groupId> -->
-<!-- 			<artifactId>haversine</artifactId> -->
-<!-- 			<version>0.1.1</version> -->
-<!-- 		</dependency> -->
 	</dependencies>
 
 	<build>
