@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="de" layout:decorator="layout/validationHeader">
+<head>
+    <title>Bestellungen</title>
+</head>
+<body>
+<div class="content" layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card" style="height: 400px;">
+                    <div class="card-header card-header-icon"
+                         data-background-color="devkGreen">
+                        <i class="material-icons">add_shopping_cart</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">
+                            Bestellungen hinzufügen
+                            <small> - CSV Import</small>
+                        </h4>
+                        <div>
+                            <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                                <div class="form-control" data-trigger="fileinput"><i
+                                        class="glyphicon glyphicon-file fileinput-exists"></i>
+                                    <span class="fileinput-filename"></span>
+                                </div>
+                                <span class="input-group-addon fileinput-new btn btn-devkOrange btn-file">
+                                    <span class="fileinput-new">CSV Datei auswählen</span>
+                                    <input type="file" name="Datei upload" accept=".csv" />
+                                </span>
+                                <a href="#" class="input-group-addon btn btn-devkOrange fileinput-exists"
+                                   data-dismiss="fileinput">Entfernen</a>
+                            </div>
+                            Wählen sie die gewünschte CSV-Datei aus
+                        </div>
+                        <button class="btn btn-devkGreen" id="uploadCsvBtn">Abschicken</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card" style="height: 400px;">
+                    <div class="card-header card-header-icon"
+                         data-background-color="devkGreen">
+                        <i class="material-icons">add_shopping_cart</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">
+                            Bestellungen hinzufügen
+                            <small> - Manuelle Eingabe</small>
+                        </h4>
+                        <div>
+                            <p>Manuelle Eingabe form blabla</p>
+                        </div>
+                        <button class="btn btn-devkGreen" id="uploadManualBtn">Abschicken</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card" style="height: 400px;">
+                    <div class="card-header card-header-icon"
+                         data-background-color="devkGreen">
+                        <i class="material-icons">add_shopping_cart</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">
+                            Bestellungen hinzufügen
+                            <small> - Demodaten</small>
+                        </h4>
+                        <p>
+                            Für Simulationszwecke werden einige Beispielbestellungen hinzugefügut und bearbeitet!
+                        </p>
+                        <button class="btn btn-devkGreen" id="uploadDemoBtn">Abschicken</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon"
+                         data-background-color="devkOrange">
+                        <i class="material-icons">shopping_cart</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">Verarbeitete Bestellungen</h4>
+                        <div id="orderList">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" layout:fragment="selfScripts" src="../assets/js/orders/orders.js"/>
+</body>
+</html>

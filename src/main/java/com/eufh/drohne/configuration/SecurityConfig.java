@@ -45,6 +45,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				// Logout Weiterleitung
 				.logoutUrl("/logout").permitAll()
 				.and().exceptionHandling().accessDeniedHandler(accessDeniedHandler);; // POST only
-				
+		http.csrf().disable();
 	}
 }

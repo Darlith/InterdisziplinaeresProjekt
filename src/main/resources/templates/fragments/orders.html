@@ -1,0 +1,45 @@
+<div th:if="${orders}">
+    <div class="material-datatables">
+        <table id="datatables"
+               class="table table-striped table-no-bordered table-hover"
+               cellspacing="0" width="100%" style="width: 100%">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Bestellzeitpunkt</th>
+                <th>Lieferzeitpunkt</th>
+                <th>Zielort</th>
+                <th>Gewicht</th>
+                <th>Pünktlich</th>
+                <th class="disabled-sorting text-right"></th>
+            </tr>
+            </thead>
+            <tfoot>
+            <tr>
+                <th>ID</th>
+                <th>Bestellzeitpunkt</th>
+                <th>Lieferzeitpunkt</th>
+                <th>Zielort</th>
+                <th>Gewicht</th>
+                <th>Pünktlich</th>
+                <th class="disabled-sorting text-right"></th>            </tr>
+            </tfoot>
+            <tbody>
+                <tr th:each="order : ${orders}">
+                    <td th:text="${order.id}"></td>
+                    <td th:text="${#dates.format(order.orderDate, 'dd.MM.Y HH:mm')}"></td>
+                    <td th:text="${#dates.format(order.deliveryDate, 'dd.MM.Y HH:mm')}"></td>
+                    <td th:text="${order.location}"></td>
+                    <td th:text="${order.weight}"></td>
+                    <td th:text="${order.delayed}"></td>
+                    <td class="text-right"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- ELSE -->
+<div th:unless="${orders}">
+    <div>Orders nicht da</div>
+</div>
+
