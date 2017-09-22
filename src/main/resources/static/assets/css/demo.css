@@ -13,6 +13,15 @@
     }
 }
 
+#mapCanvas {
+    width: 100%;
+    height: 500px;
+}
+
+.modal.in .modal-dialog {
+    width: 90%;
+}
+
 #map{
     position:relative;
     width:100%;

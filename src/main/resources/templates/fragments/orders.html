@@ -1,4 +1,4 @@
-<div th:if="${orders}">
+<div th:if="${not #lists.isEmpty(orders)}">
     <div class="material-datatables">
         <table id="datatables"
                class="table table-striped table-no-bordered table-hover"
@@ -10,7 +10,8 @@
                 <th>Lieferzeitpunkt</th>
                 <th>Zielort</th>
                 <th>Gewicht</th>
-                <th>Pünktlich</th>
+                <th>Verspätung</th>
+                <th class="text-center">Fluginfos</th>
                 <th class="disabled-sorting text-right"></th>
             </tr>
             </thead>
@@ -22,7 +23,9 @@
                 <th>Zielort</th>
                 <th>Gewicht</th>
                 <th>Pünktlich</th>
-                <th class="disabled-sorting text-right"></th>            </tr>
+                <th class="text-center">Fluginformationen</th>
+                <th class="disabled-sorting text-right"></th>
+            </tr>
             </tfoot>
             <tbody>
                 <tr th:each="order : ${orders}">
@@ -31,15 +34,150 @@
                     <td th:text="${#dates.format(order.deliveryDate, 'dd.MM.Y HH:mm')}"></td>
                     <td th:text="${order.location}"></td>
                     <td th:text="${order.weight}"></td>
-                    <td th:text="${order.delayed}"></td>
+                    <td th:text="${order.delayed} ? 'Ja' : 'Nein'"></td>
+                    <td class="td-actions text-center">
+                        <button type="button" rel="tooltip" class="btn btn-devkOrange" data-original-title="Fluginfos" title="Fluginfos" th:onclick="'javascript:openDetailModal(\'' + ${order.route} + '\', \'' + ${order.location} + '\');'">
+                            <i class="material-icons">navigation</i>
+                            <div class="ripple-container" />
+                        </button>
+                    </td>
                     <td class="text-right"></td>
                 </tr>
             </tbody>
         </table>
     </div>
+    <div class="modal fade in hide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: block; padding-right: 15px;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        <i class="material-icons">clear</i>
+                    </button>
+                    <h4 class="modal-title">Fluginformationen</h4>
+                </div>
+                <div class="modal-body" id="mapCanvas">
+                </div>
+                <div class="modal-footer text-center">
+                    <p><strong>Legende:</strong> Grün: Lagerhalle | Blau: Andere Lieferorte | Grün: Zielort</p>
+                    <button type="button" class="btn btn-danger btn-simple" data-dismiss="modal">Schließen</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- ELSE -->
-<div th:unless="${orders}">
-    <div>Orders nicht da</div>
+<div th:unless="${not #lists.isEmpty(orders)}">
+    <div>Es liegen derzeit keine verarbeiteten Bestellungen vor!</div>
 </div>
+
+<script type="text/javascript" layout:fragment="selfScripts">
+    //<![CDATA[
+    $(document).ready(function() {
+        $('#datatables').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Suche",
+            }
+
+        });
+
+        $('#datatables').DataTable();
+
+        $('.card .material-datatables label').addClass('form-group');
+
+
+    });
+
+    function openDetailModal(data, destination) {
+        var array = data.split(',');
+        var coordinates = [];
+        for (var i in array) {
+            var latLng = array[i].split('|');
+            if (latLng.length > 1) {
+                coordinates.push({
+                    lat: parseFloat(latLng[0]),
+                    lng: parseFloat(latLng[1]),
+                    address: latLng[2]
+                });
+            }
+        }
+        console.log(coordinates);
+        $('#myModal').modal({
+            show: true,
+            backdrop: false
+        });
+        $('#myModal').removeClass('hide');
+        initMap(coordinates, destination);
+    }
+
+    function initMap(route, destination) {
+        var salcombe = {
+           lat: 50.23758,
+           lng: -3.769791
+        };
+        var map = new google.maps.Map(document.getElementById('mapCanvas'), {
+            center: {lat: salcombe.lat, lng: salcombe.lng},
+            zoom: 11,
+            mapTypeId: 'terrain'
+        });
+
+
+        var lineSymbol = {
+            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+            scale: 4,
+            strokeColor: 'green'
+        };
+
+        // Build path and add markers
+        var path = [salcombe];
+        for(var i in route) {
+            path.push({
+                lat: route[i].lat,
+                lng: route[i].lng
+            });
+            var dot = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
+            if (route[i]['address'] === destination) {
+                dot = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
+            } else if (route[i]['address'] === "Salcombe") {
+                dot = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+            }
+            new google.maps.Marker({
+                position: route[i],
+                icon: dot,
+                map: map,
+                title: route[i]['address']
+            });
+        }
+
+        var line = new google.maps.Polyline({
+            path: path,
+            icons: [{
+                icon: lineSymbol,
+                offset: '100%'
+            }],
+            map: map
+        });
+
+        animateCircle(line);
+    }
+
+    function animateCircle(line) {
+        var count = 0;
+        console.log('Line', line);
+        window.setInterval(function() {
+            count = (count + 1) % 200;
+
+            var icons = line.get('icons');
+            icons[0].offset = (count / 2) + '%';
+            line.set('icons', icons);
+        }, 100);
+    }
+    //]]>
+</script>
 

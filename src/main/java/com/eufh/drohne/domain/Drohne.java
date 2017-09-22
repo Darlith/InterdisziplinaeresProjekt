@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.eufh.drohne.business.service.impl.OrderLocation;
+import com.google.maps.model.LatLng;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -161,7 +163,9 @@ public class Drohne {
 					int seconds = (int) Math.floor((r.getDistance() - minutes)*60);
 					po.setDeliveryDate(simTime.plusMinutes(minutes).plusSeconds(seconds));
 				}
-				routeString += r.getDestinationOrderLocation().getAddress() + ",";
+				OrderLocation loc = r.getDestinationOrderLocation();
+				LatLng latlng = r.getDestinationOrderLocation().getLatlng();
+				routeString += latlng.lat + "|" + latlng.lng + "|" + loc.getAddress() + ",";
 			}
 			po.setRoute(routeString);
 			poList.add(po);
