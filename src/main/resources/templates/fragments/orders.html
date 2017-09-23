@@ -11,6 +11,7 @@
                 <th>Zielort</th>
                 <th>Gewicht</th>
                 <th>Verspätung</th>
+                <th>Drohne</th>
                 <th class="text-center">Fluginfos</th>
                 <th class="disabled-sorting text-right"></th>
             </tr>
@@ -23,6 +24,7 @@
                 <th>Zielort</th>
                 <th>Gewicht</th>
                 <th>Pünktlich</th>
+                <th>Drohne</th>
                 <th class="text-center">Fluginformationen</th>
                 <th class="disabled-sorting text-right"></th>
             </tr>
@@ -35,6 +37,7 @@
                     <td th:text="${order.location}"></td>
                     <td th:text="${order.weight}"></td>
                     <td th:text="${order.delayed} ? 'Ja' : 'Nein'"></td>
+                    <td th:text="${order.droneId}"></td>
                     <td class="td-actions text-center">
                         <button type="button" rel="tooltip" class="btn btn-devkOrange" data-original-title="Fluginfos" title="Fluginfos" th:onclick="'javascript:openDetailModal(\'' + ${order.route} + '\', \'' + ${order.location} + '\');'">
                             <i class="material-icons">navigation</i>

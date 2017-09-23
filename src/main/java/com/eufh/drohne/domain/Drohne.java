@@ -1,7 +1,8 @@
 package com.eufh.drohne.domain;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -20,7 +21,6 @@ import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.eufh.drohne.business.service.ProcessedOrderService;
 import com.eufh.drohne.business.service.impl.Route;
 
 @Entity
@@ -188,7 +188,8 @@ public class Drohne {
 			
 		}
 		// Set Analytics data
-		this.setAllTimeDistance(this.getAllTimeDistance() + this.totalDistance);
+		double distance = this.getAllTimeDistance() + this.totalDistance;
+		this.setAllTimeDistance(round(distance,2));
 		int flightTime = Minutes.minutesBetween(this.startTime, this.returnTime).getMinutes();
 		this.setAllTimeFlightTime(this.getAllTimeFlightTime() + flightTime);
 		//return an Frontend
@@ -266,4 +267,13 @@ public class Drohne {
 	public void setMaxPackages(int maxPackages) {
 		this.maxPackages = maxPackages;
 	}
+
+	public static double round(double value, int places) {
+		if (places < 0) throw new IllegalArgumentException();
+
+		BigDecimal bd = new BigDecimal(value);
+		bd = bd.setScale(places, RoundingMode.HALF_UP);
+		return bd.doubleValue();
+	}
+
 }

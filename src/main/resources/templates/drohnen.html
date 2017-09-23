@@ -28,7 +28,9 @@
                                     <th>Max. Pakete</th>
                                     <th>Max. Distanz</th>
                                     <th>Max. Geschwindigkeit</th>
-                                    <th class="text-right">Drohne entfernen</th>
+                                    <th>Flugzeit (Min)</th>
+                                    <th>Strecke (km)</th>
+                                    <th class="text-right">Entfernen</th>
                                     <th class="disabled-sorting text-right"></th>
                                 </tr>
                                 </thead>
@@ -39,7 +41,9 @@
                                     <th>Max. Pakete</th>
                                     <th>Max. Distanz</th>
                                     <th>Max. Geschwindigkeit</th>
-                                    <th class="text-center">Drohne entfernen</th>
+                                    <th>Flugzeit (Min)</th>
+                                    <th>Strecke (km)</th>
+                                    <th class="text-center">Entfernen</th>
                                     <th class="disabled-sorting text-right"></th>
                                 </tr>
                                 </tfoot>
@@ -50,6 +54,8 @@
                                     <td th:text="${drone.maxPackages}"></td>
                                     <td th:text="${drone.maxDistance}"></td>
                                     <td th:text="${drone.speed}"></td>
+                                    <td th:text="${drone.allTimeFlightTime}"></td>
+                                    <td th:text="${drone.allTimeDistance}"></td>
                                     <td class="td-actions text-right">
                                         <button type="button" rel="tooltip" class="btn btn-danger"
                                                 data-original-title="Löschen" title="Löschen" th:onclick="'javascript:deleteDrone(' + ${drone.id} + ');'">
@@ -110,6 +116,8 @@
             html +='<td>' + drone.maxPackages + '</td>';
             html +='<td>' + drone.maxDistance + '</td>';
             html +='<td>' + drone.speed + '</td>';
+            html +='<td>' + drone.allTimeFlightTime + '</td>';
+            html +='<td>' + drone.allTimeDistance + '</td>';
             html += '<td class="td-actions text-right">';
             html += '<button type="button" rel="tooltip" class="btn btn-danger" data-original-title="Löschen" title="Löschen" onclick="javascript:deleteDrone('+drone.id+');">';
             html += '<i class="material-icons">close</i>';
