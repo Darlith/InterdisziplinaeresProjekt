@@ -18,4 +18,6 @@ public interface DroneRepository extends Repository<Drohne, Integer> {
 	Drohne save(Drohne drohne);
 	
 	Drohne findOne(Integer id);
+
+	void delete(Integer id);
 }

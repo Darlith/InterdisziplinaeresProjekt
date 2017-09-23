@@ -2,13 +2,13 @@ package com.eufh.drohne.controller;
 
 import java.util.ArrayList;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import com.eufh.drohne.business.service.DroneService;
 import com.eufh.drohne.business.service.ProcessedOrderService;
@@ -45,20 +45,33 @@ public class FrontController {
 		return "validation";
 	}
 
-	@RequestMapping("/bepacken")
-	String datatablesNet(Model model) {
-		// Setzt den Namen der Seite auf der validationHeader.html
-		model.addAttribute("pageName", "Bepacken");
-
-//		ArrayList<Order> orders = testService.findAll();
-//		model.addAttribute("list", orders);
-		return "bepacken";
-	}
-
 	@RequestMapping("/bestellungen")
 	public String orders(Model model) {
 		model.addAttribute("pageName", "Bestellungen");
 		return "bestellungen";
+	}
+
+	@RequestMapping("/drohnen")
+	public String drones(Model model) {
+		model.addAttribute("pageName", "Drohnen");
+
+		ArrayList<Drohne> drones = this.droneService.findAll();
+		model.addAttribute("drones", drones);
+
+		return "drohnen";
+	}
+
+	@RequestMapping(value = "/drones/delete/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity deleteDrone(@PathVariable("id") int droneId) {
+		this.droneService.deleteOne(droneId);
+		return new ResponseEntity(HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/drones/add", method = RequestMethod.POST)
+	public @ResponseBody Drohne addDrone() {
+		Drohne newDrone = new Drohne();
+		this.droneService.save(newDrone);
+		return newDrone;
 	}
 
 	@RequestMapping("/charts")

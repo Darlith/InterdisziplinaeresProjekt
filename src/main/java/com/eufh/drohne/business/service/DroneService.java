@@ -13,4 +13,6 @@ public interface DroneService {
 	
 	Drohne findOne(Integer id);
 
+	void deleteOne(Integer id);
+
 }

@@ -46,10 +46,10 @@
 							<p>Dashboard</p>
 						</a>
 					</li>
-                    <li sec:authorize="hasRole('ROLE_ARBEITER') or hasRole('ROLE_ADMIN')" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/bepacken') ? 'active':''}">
-                    	<a href="/bepacken">
-							<i class="material-icons">card_giftcard</i>
-							<p>Bepacken</p>
+					<li sec:authorize="hasRole('ROLE_ARBEITER') or hasRole('ROLE_ADMIN')" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/drohnen') ? 'active':''}">
+						<a href="/drohnen">
+							<i class="material-icons">local_airport</i>
+							<p>Drohnen</p>
 						</a>
 					</li>
 					<li sec:authorize="hasRole('ROLE_ARBEITER') or hasRole('ROLE_ADMIN')" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/bestellungen') ? 'active':''}">

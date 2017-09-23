@@ -16,6 +16,7 @@ import com.eufh.drohne.business.service.impl.OrderLocation;
 import com.google.maps.model.LatLng;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -186,6 +187,10 @@ public class Drohne {
 			poList.add(po);
 			
 		}
+		// Set Analytics data
+		this.setAllTimeDistance(this.getAllTimeDistance() + this.totalDistance);
+		int flightTime = Minutes.minutesBetween(this.startTime, this.returnTime).getMinutes();
+		this.setAllTimeFlightTime(this.getAllTimeFlightTime() + flightTime);
 		//return an Frontend
 		//TEST CODE
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss");

@@ -45,5 +45,9 @@ public class DroneServiceImpl implements DroneService {
 	public Drohne save(Drohne drohne) {
 		return droneRepository.save(drohne);
 	}
+
+	public void deleteOne(Integer id) {
+		droneRepository.delete(id);
+	}
 }
 

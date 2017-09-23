@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="de" layout:decorator="layout/validationHeader">
+<head>
+    <title>Drohnen</title>
+</head>
+
+<body>
+<div class="content" layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon"
+                         data-background-color="devkGreen">
+                        <i class="material-icons">explore</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">Drohnen Übersicht</h4>
+                        <button class="btn btn-devkGreen" id="addDroneBtn">Drohne hinzufügen</button>
+                        <div class="material-datatables">
+                            <table id="datatables"
+                                   class="table table-striped table-no-bordered table-hover"
+                                   cellspacing="0" width="100%" style="width: 100%">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Max. Gewicht</th>
+                                    <th>Max. Pakete</th>
+                                    <th>Max. Distanz</th>
+                                    <th>Max. Geschwindigkeit</th>
+                                    <th class="text-right">Drohne entfernen</th>
+                                    <th class="disabled-sorting text-right"></th>
+                                </tr>
+                                </thead>
+                                <tfoot>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Max. Gewicht</th>
+                                    <th>Max. Pakete</th>
+                                    <th>Max. Distanz</th>
+                                    <th>Max. Geschwindigkeit</th>
+                                    <th class="text-center">Drohne entfernen</th>
+                                    <th class="disabled-sorting text-right"></th>
+                                </tr>
+                                </tfoot>
+                                <tbody>
+                                <tr th:each="drone : ${drones}" th:id="'droneRow' + ${drone.id}">
+                                    <td th:text="${drone.id}"></td>
+                                    <td th:text="${drone.maxWeight}"></td>
+                                    <td th:text="${drone.maxPackages}"></td>
+                                    <td th:text="${drone.maxDistance}"></td>
+                                    <td th:text="${drone.speed}"></td>
+                                    <td class="td-actions text-right">
+                                        <button type="button" rel="tooltip" class="btn btn-danger"
+                                                data-original-title="Löschen" title="Löschen" th:onclick="'javascript:deleteDrone(' + ${drone.id} + ');'">
+                                            <i class="material-icons">close</i>
+                                        </button>
+                                    </td>
+                                    <td class="text-right"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript" layout:fragment="selfScripts">
+    //<![CDATA[
+    $(document).ready(function () {
+        $('#datatables').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Suche",
+            }
+        });
+
+        var $tableSelector = $('#datatables');
+        var $table = $tableSelector.DataTable();
+
+        $('.card .material-datatables label').addClass('form-group');
+
+        $('#addDroneBtn').on('click', function() {
+            var uri = '/drones/add';
+            $.ajax({
+                url: uri,
+                type: 'post',
+                success: function (drone) {
+                    showNotification("Drohne " + drone.id + " erfolgreich hinzugefügt!", 'success');
+                    renderNewDrone(drone);
+                }
+            });
+        });
+
+        function renderNewDrone(drone) {
+            var html = '<tr id="droneRow' + drone.id + '">';
+            html +='<td>' + drone.id + '</td>';
+            html +='<td>' + drone.maxWeight + '</td>';
+            html +='<td>' + drone.maxPackages + '</td>';
+            html +='<td>' + drone.maxDistance + '</td>';
+            html +='<td>' + drone.speed + '</td>';
+            html += '<td class="td-actions text-right">';
+            html += '<button type="button" rel="tooltip" class="btn btn-danger" data-original-title="Löschen" title="Löschen" onclick="javascript:deleteDrone('+drone.id+');">';
+            html += '<i class="material-icons">close</i>';
+            html += '</button>';
+            html += '</td>';
+            html += '<td class="text-right"></td>';
+            html += '</td></tr>';
+            $('.dataTables_empty').remove();
+            $("#datatables tr:last").after(html);
+        }
+    });
+
+    function deleteDrone(id) {
+        var uri = '/drones/delete/' + id;
+        $.ajax({
+            url: uri,
+            type: 'delete',
+            success: function () {
+                showNotification("Drohne " + id + " erfolgreich gelöscht!", 'danger');
+                $('#droneRow' + id).remove();
+            }
+        });
+    }
+
+    function showNotification(msg, type) {
+        type = type || 'success';
+        $.notify({
+            icon: "notifications",
+            message: msg
+        },{
+            type: type,
+            timer: 1000,
+            placement: {
+                from: 'top',
+                align: 'right'
+            }
+        });
+
+    }
+    //]]>
+</script>
+</body>
+
+</html>
