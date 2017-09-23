@@ -9,15 +9,23 @@ $(function() {
 
     // Register click handlers
     $('#uploadCsvBtn').click(handleCsvSubmit);
-    $('#uploadManualBtn').click(handleManualSubmit);
     $('#uploadDemoBtn').click(handleDemoSubmit);
+    $('#deleteOrderData').click(handleDeleteOrderDataSubmit);
 
     function handleCsvSubmit(e) {
-        alert('ToDo');
+        alert('Feature in arbeit!');
     }
 
-    function handleManualSubmit(e) {
-        alert('ToDo');
+    function handleDeleteOrderDataSubmit() {
+        var uri = '/orders/delete';
+        $.ajax({
+            type: 'DELETE',
+            url: uri,
+            success: function() {
+                showNotification("Die Bestellungen wurden gelöscht", 'danger');
+                getOrders();
+            }
+        })
     }
 
     function handleDemoSubmit(e) {

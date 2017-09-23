@@ -19,4 +19,6 @@ public interface ProcessedOrderRepository extends Repository<ProcessedOrder, Int
 	ProcessedOrder save(ProcessedOrder order);
 	
 	ProcessedOrder findOne(Integer id);
+
+	void deleteAll();
 }

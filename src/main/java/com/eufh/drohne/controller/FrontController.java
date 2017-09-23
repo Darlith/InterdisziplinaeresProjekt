@@ -70,6 +70,12 @@ public class FrontController {
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
+	@RequestMapping(value = "/orders/delete", method = RequestMethod.DELETE)
+	public ResponseEntity deleteOrders() {
+		this.processedOrderService.deleteAll();
+		return new ResponseEntity(HttpStatus.OK);
+	}
+
 	@RequestMapping(value = "/drones/add", method = RequestMethod.POST)
 	public @ResponseBody Drohne addDrone() {
 		Drohne newDrone = new Drohne();

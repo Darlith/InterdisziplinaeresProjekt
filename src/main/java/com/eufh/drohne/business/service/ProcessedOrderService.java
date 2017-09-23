@@ -12,4 +12,6 @@ public interface ProcessedOrderService {
 	
 	ProcessedOrder findOne(Integer id);
 
+	void deleteAll();
+
 }

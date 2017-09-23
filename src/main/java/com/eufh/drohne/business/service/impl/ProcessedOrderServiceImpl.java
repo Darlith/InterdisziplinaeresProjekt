@@ -48,5 +48,9 @@ public class ProcessedOrderServiceImpl implements ProcessedOrderService {
 	public ProcessedOrder save(ProcessedOrder order) {
 		return processedOrderRepository.save(order);
 	}
+
+	public void deleteAll() {
+		this.processedOrderRepository.deleteAll();
+	}
 }
 
