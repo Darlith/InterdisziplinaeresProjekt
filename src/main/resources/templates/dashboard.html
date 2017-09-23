@@ -7,6 +7,66 @@
 <body>
 	<div class="content" layout:fragment="content">
 		<div class="container-fluid">
+			<div class="row" th:if="${analytics.processedOrders == 0}">
+				<div class="col-md-12">
+					<div class="card">
+						<div class="card-header card-header-icon"
+							 data-background-color="rose">
+							<i class="material-icons">warning</i>
+						</div>
+						<div class="card-content">
+							<h4 class="card-title">Achtung</h4>
+							<p>Es sind nicht genug Bestellungen verarbeitet worden, um Auswertungen anzufertigen. Bitte fügen sie Bestellungen <a href="/bestellungen">hier</a> hinzu</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="card card-stats">
+						<div class="card-header" data-background-color="orange">
+							<i class="material-icons">shopping_cart</i>
+						</div>
+						<div class="card-content">
+							<p class="category">Verarbeitete Bestellungen</p>
+							<h3 class="card-title" th:text="${analytics.processedOrders}"></h3>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="card card-stats">
+						<div class="card-header" data-background-color="rose">
+							<i class="material-icons">access_time</i>
+						</div>
+						<div class="card-content">
+							<p class="category" >Durchschnittliche Lieferzeit (Minuten)</p>
+							<h3 class="card-title" th:text="${#numbers.formatDecimal(analytics.averageFlightTime, 1, 2)}"></h3>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="card card-stats">
+						<div class="card-header" data-background-color="blue">
+							<i class="material-icons">timer</i>
+						</div>
+						<div class="card-content">
+							<p class="category">Verspätungsquote</p>
+							<h3 class="card-title" th:text="${#numbers.formatDecimal(analytics.delayedQuote, 1, 2)} + '%'"></h3>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="card card-stats">
+						<div class="card-header" data-background-color="green">
+							<i class="material-icons">flight</i>
+						</div>
+						<div class="card-content">
+							<p class="category">Drohnen im Einsatz</p>
+							<h3 class="card-title" th:text="${analytics.droneCount}"></h3>
+						</div>
+					</div>
+				</div>
+			</div>
 			<div class="row">
 				<div class="col-md-12">
 					<div class="card" style="height: 400px;">

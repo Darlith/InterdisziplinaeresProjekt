@@ -121,6 +121,10 @@ public class TestServiceImpl implements TestService {
 		this.incOrders = new ArrayList<Order>();
 		CreateOrderByList(input);
 		this.drones = this.getDrones();
+		//this.drones = new Drohne[] { new Drohne(), new Drohne(), new Drohne(), new Drohne(), new Drohne() };
+		//for(Drohne d: drones) {
+		//	droneService.save(d);
+		//}
 		this.dronePointer = drones[0].getId() - 1;
 		SetNextDroneActive();
 		setSimTime();
@@ -132,6 +136,9 @@ public class TestServiceImpl implements TestService {
 	private Drohne[] getDrones() {
 		ArrayList<Drohne> allDrones = this.droneService.findAll();
 		Drohne[] arrayDrones = new Drohne[allDrones.size()];
+		for(Drohne d: allDrones) {
+			d.resetDrone();
+		}
 		if (arrayDrones.length > 0) {
 			return allDrones.toArray(arrayDrones);
 		}

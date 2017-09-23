@@ -2,6 +2,9 @@ package com.eufh.drohne.controller;
 
 import java.util.ArrayList;
 
+import com.eufh.drohne.analytics.AnalyticsDTO;
+import com.eufh.drohne.analytics.AnalyticsService;
+import com.eufh.drohne.domain.ProcessedOrder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -85,9 +88,14 @@ public class FrontController {
 	String dashboard(Model model) {
 		// Setzt den Namen der Seite auf der validationHeader.html
 		model.addAttribute("pageName", "Dashboard");
-		
-		ArrayList<Drohne> drohnen = droneService.findAll();
-		model.addAttribute("list", drohnen);
+
+		ArrayList<ProcessedOrder> orders = this.processedOrderService.findAll();
+		ArrayList<Drohne> drones = this.droneService.findAll();
+
+		AnalyticsService analyticsService = new AnalyticsService();
+		AnalyticsDTO analytics = analyticsService.getAnalyzedData(orders, drones);
+
+		model.addAttribute("analytics", analytics);
 		return "dashboard";
 	}
 
