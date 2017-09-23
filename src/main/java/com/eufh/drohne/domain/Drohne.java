@@ -37,8 +37,6 @@ public class Drohne {
 	private double totalDistance; //km
 	@Transient
 	private List<Order> orders;
-	@Column(name = "geschwindigkeit")
-	public int speed = 60; // kmh
 	@Transient
 	private List<Route> route;
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -47,8 +45,25 @@ public class Drohne {
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	@Column(name = "returnTime")
 	private DateTime returnTime;
-	
-	
+
+	@Column(name = "geschwindigkeit")
+	public int speed = 60; // kmh
+
+	@Column(name = "all_time_distance")
+	private double allTimeDistance = 0;
+
+	@Column(name = "all_time_flight_time")
+	private double allTimeFlightTime = 0;
+
+	@Column(name = "max_weight")
+	private double maxWeight = 4;
+
+	@Column(name = "max_distance")
+	private double maxDistance = 25;
+
+	@Column(name = "max_packages")
+	private int maxPackages = 4;
+
 	public Drohne() {
 		this.route = new ArrayList<Route>();
 		this.orders = new ArrayList<Order>();
@@ -206,6 +221,44 @@ public class Drohne {
 		return "Drohne [id=" + id + ", totalPackageWeight=" + totalPackageWeight + ", packageCount=" + packageCount
 				+ ", totalDistance=" + totalDistance + ", orders=" + orders + ", speed=" + speed + "]";
 	}
-	
-	
+
+	public double getAllTimeDistance() {
+		return allTimeDistance;
+	}
+
+	public void setAllTimeDistance(double allTimeDistance) {
+		this.allTimeDistance = allTimeDistance;
+	}
+
+	public double getAllTimeFlightTime() {
+		return allTimeFlightTime;
+	}
+
+	public void setAllTimeFlightTime(double allTimeFlightTime) {
+		this.allTimeFlightTime = allTimeFlightTime;
+	}
+
+	public double getMaxWeight() {
+		return maxWeight;
+	}
+
+	public void setMaxWeight(double maxWeight) {
+		this.maxWeight = maxWeight;
+	}
+
+	public double getMaxDistance() {
+		return maxDistance;
+	}
+
+	public void setMaxDistance(double maxDistance) {
+		this.maxDistance = maxDistance;
+	}
+
+	public int getMaxPackages() {
+		return maxPackages;
+	}
+
+	public void setMaxPackages(int maxPackages) {
+		this.maxPackages = maxPackages;
+	}
 }
