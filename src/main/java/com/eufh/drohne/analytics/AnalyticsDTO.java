@@ -1,5 +1,9 @@
 package com.eufh.drohne.analytics;
 
+import com.eufh.drohne.domain.Coordinates;
+
+import java.util.ArrayList;
+
 public class AnalyticsDTO {
 
     private int processedOrders;
@@ -10,11 +14,14 @@ public class AnalyticsDTO {
 
     private int droneCount;
 
-    public AnalyticsDTO(int processedOrders, double averageFlightTime, double delayedQuote, int droneCount) {
+    private ArrayList<Coordinates> coordinates;
+
+    public AnalyticsDTO(int processedOrders, double averageFlightTime, double delayedQuote, int droneCount, ArrayList<Coordinates> coordinates) {
         this.processedOrders = processedOrders;
         this.averageFlightTime = averageFlightTime;
         this.delayedQuote = delayedQuote;
         this.droneCount = droneCount;
+        this.coordinates = coordinates;
     }
 
     public int getProcessedOrders() {
@@ -31,5 +38,9 @@ public class AnalyticsDTO {
 
     public int getDroneCount() {
         return droneCount;
+    }
+
+    public ArrayList<Coordinates> getCoordinates() {
+        return coordinates;
     }
 }

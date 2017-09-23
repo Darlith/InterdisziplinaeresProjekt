@@ -98,7 +98,7 @@ public class FrontController {
 		ArrayList<ProcessedOrder> orders = this.processedOrderService.findAll();
 		ArrayList<Drohne> drones = this.droneService.findAll();
 
-		AnalyticsService analyticsService = new AnalyticsService();
+		AnalyticsService analyticsService = new AnalyticsService(this.testService);
 		AnalyticsDTO analytics = analyticsService.getAnalyzedData(orders, drones);
 
 		model.addAttribute("analytics", analytics);
