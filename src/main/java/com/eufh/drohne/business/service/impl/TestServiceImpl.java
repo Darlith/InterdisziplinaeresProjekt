@@ -120,17 +120,31 @@ public class TestServiceImpl implements TestService {
 				};
 		this.incOrders = new ArrayList<Order>();
 		CreateOrderByList(input);
-		this.drones = new Drohne[] {new Drohne(), new Drohne(), new Drohne(), new Drohne(), new Drohne()};
-		for(Drohne drone: drones)
-		{
-			droneService.save(drone);
-		}
+		this.drones = this.getDrones();
 		this.dronePointer = drones[0].getId() - 1;
 		SetNextDroneActive();
 		setSimTime();
 		
 		
 		Simulate();
+	}
+
+	private Drohne[] getDrones() {
+		ArrayList<Drohne> allDrones = this.droneService.findAll();
+		Drohne[] arrayDrones = new Drohne[allDrones.size()];
+		if (arrayDrones.length > 0) {
+			return allDrones.toArray(arrayDrones);
+		}
+		// Initialize default drones
+		int defaultDroneAmount = 5;
+		Drohne[] drones = new Drohne[5];
+		for (int i = 0; i < drones.length; i++) {
+			Drohne d = new Drohne();
+			this.droneService.save(d);
+			drones[i] = d;
+		}
+
+		return drones;
 	}
 	
 	private void Simulate() {
