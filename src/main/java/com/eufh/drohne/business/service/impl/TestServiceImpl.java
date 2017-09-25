@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import com.eufh.drohne.domain.*;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.eufh.drohne.business.service.DroneService;
 import com.eufh.drohne.business.service.ProcessedOrderService;
 import com.eufh.drohne.business.service.TestService;
-import com.eufh.drohne.domain.Drohne;
-import com.eufh.drohne.domain.Coordinates;
-import com.eufh.drohne.domain.Order;
-import com.eufh.drohne.domain.ProcessedOrder;
 import com.eufh.drohne.repository.DroneRepository;
 import com.eufh.drohne.repository.TestRepository;
 import com.google.maps.GeoApiContext;
@@ -67,16 +64,21 @@ public class TestServiceImpl implements TestService {
 	public Coordinates save(Coordinates coordinates) {
 		return testRepository.save(coordinates);
 	}
-	
-	/*
-	 * Entry point for the drone simulation
-	 */
-	public void startDroneSimulation() {
-		//TODO PHKO: expand method as needed (DoSomething)
-		String [] input = new String[] { 
-				"20.01.2017, 08:00, Strete, 2.1", 
+
+	public void startWithCsvOrders(CsvOrder[] orders) {
+		String[] input = new String[orders.length];
+		for(int i = 0; i<orders.length; i++) {
+			input[i] = orders[i].toString();
+		}
+
+		this.startDroneSimulation(input);
+	}
+
+	public void startWithDefaultOrders() {
+		String [] defaultOrders = new String[] {
+				"20.01.2017, 08:00, Strete, 2.1",
 				"20.01.2017, 08:01, Thurlestone, 1.2",
-				"20.01.2017, 08:02, Beesands, 0.7", 
+				"20.01.2017, 08:02, Beesands, 0.7",
 				"20.01.2017, 08:02, West Charleton, 3.9",
 				"20.01.2017, 08:05, Kingsbridge, 2.7",
 				"20.01.2017, 08:07, Strete, 3.2",
@@ -93,7 +95,7 @@ public class TestServiceImpl implements TestService {
 				"20.01.2017, 08:32, South Milton, 0.9",
 				"20.01.2017, 08:34, Malborough, 1.2",
 				"20.01.2017, 08:35, West Charleton, 1.4",
-				"20.01.2017, 08:35, Hope Cove, 1.8", 
+				"20.01.2017, 08:35, Hope Cove, 1.8",
 				"20.01.2017, 08:37, Sherford, 3.8",
 				"20.01.2017, 08:38, Aveton Gifford, 3.6",
 				"20.01.2017, 08:39, Strete, 2.9",
@@ -116,8 +118,16 @@ public class TestServiceImpl implements TestService {
 				"20.01.2017, 08:56, South Milton, 0.5",
 				"20.01.2017, 08:58, Malborough, 1.4",
 				"20.01.2017, 08:59, West Charleton, 2.4",
-				"20.01.2017, 08:59, Hope Cove, 0.8"			
-				};
+				"20.01.2017, 08:59, Hope Cove, 0.8"
+		};
+		this.startDroneSimulation(defaultOrders);
+	}
+
+	/*
+	 * Entry point for the drone simulation
+	 */
+	public void startDroneSimulation(String[] input) {
+		//TODO PHKO: expand method as needed (DoSomething)
 		this.incOrders = new ArrayList<Order>();
 		CreateOrderByList(input);
 		this.drones = this.getDrones();
