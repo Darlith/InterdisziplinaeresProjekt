@@ -24,7 +24,7 @@ public class Securityhandler implements AuthenticationSuccessHandler {
 			response.sendRedirect("/dashboard");
 		}
 		if (roles.contains("ROLE_ARBEITER")) {
-			response.sendRedirect("/bepacken");
+			response.sendRedirect("/drohnen");
 		}
 	}
 }
