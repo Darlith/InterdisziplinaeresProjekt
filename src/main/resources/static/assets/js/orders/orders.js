@@ -63,6 +63,7 @@ $(function() {
             },
             error: function() {
                 showNotification('Es ist ein Fehler aufgetreten. Bitte CSV-Struktur überprüfen', 'danger');
+                $('#uploadCsvBtn').html('Abschicken');
             }
         });
 

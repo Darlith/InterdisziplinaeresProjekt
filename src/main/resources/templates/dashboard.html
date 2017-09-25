@@ -1,96 +1,151 @@
 <!doctype html>
 <html lang="de" layout:decorator="layout/validationHeader">
 <head>
-<title>Dashboard</title>
+    <title>Dashboard</title>
 </head>
 
 <body>
-	<div class="content" layout:fragment="content">
-		<div class="container-fluid">
-			<div class="row" th:if="${analytics.processedOrders == 0}">
-				<div class="col-md-12">
-					<div class="card">
-						<div class="card-header card-header-icon"
-							 data-background-color="rose">
-							<i class="material-icons">warning</i>
-						</div>
-						<div class="card-content">
-							<h4 class="card-title">Achtung</h4>
-							<p>Es sind nicht genug Bestellungen verarbeitet worden, um Auswertungen anzufertigen.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-6">
-					<div class="card card-stats">
-						<div class="card-header" data-background-color="orange">
-							<i class="material-icons">shopping_cart</i>
-						</div>
-						<div class="card-content">
-							<p class="category">Verarbeitete Bestellungen</p>
-							<h3 class="card-title" th:text="${analytics.processedOrders}"></h3>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-6">
-					<div class="card card-stats">
-						<div class="card-header" data-background-color="rose">
-							<i class="material-icons">access_time</i>
-						</div>
-						<div class="card-content">
-							<p class="category" >Durchschnittliche Lieferzeit (Minuten)</p>
-							<h3 class="card-title" th:text="${#numbers.formatDecimal(analytics.averageFlightTime, 1, 2)}"></h3>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-6">
-					<div class="card card-stats">
-						<div class="card-header" data-background-color="blue">
-							<i class="material-icons">timer</i>
-						</div>
-						<div class="card-content">
-							<p class="category">Verspätungsquote</p>
-							<h3 class="card-title" th:text="${#numbers.formatDecimal(analytics.delayedQuote, 1, 2)} + '%'"></h3>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-6">
-					<div class="card card-stats">
-						<div class="card-header" data-background-color="green">
-							<i class="material-icons">flight</i>
-						</div>
-						<div class="card-content">
-							<p class="category">Drohnen im Einsatz</p>
-							<h3 class="card-title" th:text="${analytics.droneCount}"></h3>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<div class="card" style="height: 400px;">
-						<div class="card-header card-header-icon"
-							data-background-color="rose">
-							<i class="material-icons">add_location</i>
-						</div>
-						<div class="card-content">
-							<h4 class="card-title">Belieferte Orte</h4>
-							<div id="map_canvas" class="map"></div>
-							<p class="text-center"><strong>Legende:</strong> Rot: Lagerhalle | Blau: Belieferte Orte</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="content" layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row" th:if="${analytics.processedOrders == 0}">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon"
+                         data-background-color="rose">
+                        <i class="material-icons">warning</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">Achtung</h4>
+                        <p>Es sind nicht genug Bestellungen verarbeitet worden, um Auswertungen anzufertigen.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="orange">
+                        <i class="material-icons">shopping_cart</i>
+                    </div>
+                    <div class="card-content">
+                        <p class="category">Verarbeitete Bestellungen</p>
+                        <h3 class="card-title" th:text="${analytics.processedOrders}"></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="rose">
+                        <i class="material-icons">access_time</i>
+                    </div>
+                    <div class="card-content">
+                        <p class="category">Durchschnittliche Lieferzeit (Minuten)</p>
+                        <h3 class="card-title"
+                            th:text="${#numbers.formatDecimal(analytics.averageFlightTime, 1, 2)}"></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="blue">
+                        <i class="material-icons">timer</i>
+                    </div>
+                    <div class="card-content">
+                        <p class="category">Verspätungsquote</p>
+                        <h3 class="card-title"
+                            th:text="${#numbers.formatDecimal(analytics.delayedQuote, 1, 2)} + '%'"></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">flight</i>
+                    </div>
+                    <div class="card-content">
+                        <p class="category">Drohnen im Einsatz</p>
+                        <h3 class="card-title" th:text="${analytics.droneCount}"></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card" style="height: 400px;">
+                    <div class="card-header card-header-icon"
+                         data-background-color="rose">
+                        <i class="material-icons">add_location</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">Belieferte Orte</h4>
+                        <div id="map_canvas" class="map"></div>
+                        <p class="text-center"><strong>Legende:</strong> Rot: Lagerhalle | Blau: Belieferte Orte</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon"
+                         data-background-color="blue">
+                        <i class="material-icons">insert_chart</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">
+                            Flugdistanz
+                            <small>- Pro Drohne</small>
+                        </h4>
+                    </div>
+                    <div id="distancePerDroneChart" class="ct-chart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon"
+                         data-background-color="blue">
+                        <i class="material-icons">insert_chart</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">
+                            Flugzeiten
+                            <small>- Pro Drohne</small>
+                        </h4>
+                    </div>
+                    <div id="flightTimePerDroneChart" class="ct-chart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon"
+                         data-background-color="blue">
+                        <i class="material-icons">insert_chart</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">
+                            Durchschnittsgeschwindigkeit
+                            <small>- Pro Drohne</small>
+                        </h4>
+                    </div>
+                    <div id="speedPerDroneChart" class="ct-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 <script type="text/javascript" layout:fragment="selfScripts" th:inline="javascript">
     //<![CDATA[
     $(document).ready(function () {
         var analyticsData = [[${analytics}]];
-
+        console.log(analyticsData);
         initMap();
+
+        initCharts();
 
         function initMap() {
             var salcombe = {
@@ -102,18 +157,73 @@
                 center: salcombe
             });
             var markers = analyticsData.coordinates;
-            for(var i in markers) {
+            for (var i in markers) {
                 var obj = markers[i];
                 var marker = new google.maps.Marker({
                     position: {lat: obj.latitude, lng: obj.longitude},
                     icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
                     map: map
                 });
-			};
-            var marker = new google.maps.Marker({
+            }
+            new google.maps.Marker({
                 position: salcombe,
                 map: map
             });
+        }
+
+        function initCharts() {
+            var speedPerDrone = analyticsData.speedPerDrone;
+            var distancePerDrone = analyticsData.distancePerDrone;
+            var flightTimePerDrone = analyticsData.flightTimePerDrone;
+            if (!speedPerDrone) {
+                return;
+            }
+            var dataSpeedPerDrone = getChartData(speedPerDrone);
+            var dataDistancePerDrone = getChartData(distancePerDrone);
+            var dataFlightTimePerDrone = getChartData(flightTimePerDrone);
+
+            var optionsMultipleBarsChart = {
+                seriesBarDistance: 10,
+                axisX: {
+                    showGrid: false
+                },
+                height: '300px'
+            };
+
+            var responsiveOptionsMultipleBarsChart = [
+                ['screen and (max-width: 640px)', {
+                    seriesBarDistance: 5,
+                    axisX: {
+                        labelInterpolationFnc: function (value) {
+                            return value[0];
+                        }
+                    }
+                }]
+            ];
+
+            var speedChart = Chartist.Bar('#speedPerDroneChart', dataSpeedPerDrone, optionsMultipleBarsChart, responsiveOptionsMultipleBarsChart);
+            var distanceChart = Chartist.Bar('#distancePerDroneChart', dataDistancePerDrone, optionsMultipleBarsChart, responsiveOptionsMultipleBarsChart);
+            var timeChart = Chartist.Bar('#flightTimePerDroneChart', dataFlightTimePerDrone, optionsMultipleBarsChart, responsiveOptionsMultipleBarsChart);
+            md.startAnimationForBarChart(distanceChart);
+            md.startAnimationForBarChart(timeChart);
+            md.startAnimationForBarChart(speedChart);
+
+        }
+
+        function getChartData(data) {
+            var labels = [];
+            var series = [];
+            data.forEach(function (item, index) {
+                var count = index + 1;
+                labels.push('Drohne ' + count);
+                series.push(item);
+            });
+            return {
+                labels: labels,
+                series: [
+                    series
+                ]
+            };
         }
 
     });

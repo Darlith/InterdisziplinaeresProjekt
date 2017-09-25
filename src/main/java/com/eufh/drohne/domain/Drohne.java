@@ -276,4 +276,7 @@ public class Drohne {
 		return bd.doubleValue();
 	}
 
+	public int getSpeed() {
+		return speed;
+	}
 }

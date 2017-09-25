@@ -5,9 +5,11 @@ import com.eufh.drohne.business.service.impl.TestServiceImpl;
 import com.eufh.drohne.domain.Coordinates;
 import com.eufh.drohne.domain.Drohne;
 import com.eufh.drohne.domain.ProcessedOrder;
+import org.apache.tomcat.jni.Proc;
 import org.joda.time.Minutes;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class AnalyticsService {
 
@@ -20,13 +22,44 @@ public class AnalyticsService {
     public AnalyticsDTO getAnalyzedData(ArrayList<ProcessedOrder> orders, ArrayList<Drohne> drones) {
         int processedOrders = orders.size();
         if (processedOrders == 0) {
-            return new AnalyticsDTO(0, 0, 0, 0, null);
+            return new AnalyticsDTO(0, 0, 0, 0, null, null, null, null);
         }
         double averageFlightTime = this.getAverageFlightTime(orders);
         double delayedQuote = this.getDelayedQoute(orders) * 100;
         ArrayList<Coordinates> coordinates = this.getCoordinates(orders);
+        ArrayList<Double> distances = this.getDistancePerDrone(drones);
+        ArrayList<Integer> speed = this.getSpeedPerDrone(drones);
+        ArrayList<Double> flightTimes = this.getFlightTimePerDrone(drones);
 
-        return new AnalyticsDTO(processedOrders, averageFlightTime, delayedQuote, drones.size(), coordinates);
+
+        return new AnalyticsDTO(processedOrders, averageFlightTime, delayedQuote, drones.size(), coordinates, speed, distances, flightTimes);
+    }
+
+    private ArrayList<Integer> getSpeedPerDrone(ArrayList<Drohne> drones) {
+        ArrayList<Integer> speed = new ArrayList<>();
+        for(Drohne drone: drones) {
+            speed.add(drone.getSpeed());
+        }
+
+        return speed;
+    }
+
+    private ArrayList<Double> getDistancePerDrone(ArrayList<Drohne> drones) {
+        ArrayList<Double> distances = new ArrayList<>();
+        for(Drohne drone: drones) {
+            distances.add(drone.getAllTimeDistance());
+        }
+
+        return distances;
+    }
+
+    private ArrayList<Double> getFlightTimePerDrone(ArrayList<Drohne> drones) {
+        ArrayList<Double> times = new ArrayList<>();
+        for(Drohne drone: drones) {
+            times.add(drone.getAllTimeFlightTime());
+        }
+
+        return times;
     }
 
     private ArrayList<Coordinates> getCoordinates(ArrayList<ProcessedOrder> orders) {
