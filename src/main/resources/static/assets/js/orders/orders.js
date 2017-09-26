@@ -43,7 +43,7 @@ $(function() {
     }
 
     function handleCsvUpload(orders) {
-        showNotification("Die Bestellungen werden verabeitet");
+        showNotification("Die Bestellungen werden verarbeitet");
         $('#uploadCsvBtn').html('Verarbeite Daten...');
         var str = JSON.stringify(orders);
         str = str.replace(/Bestellzeitpunkt/g, 'orderTime');
@@ -83,7 +83,7 @@ $(function() {
     }
 
     function handleDemoSubmit(e) {
-        showNotification("Die Bestellungen werden verabeitet");
+        showNotification("Die Bestellungen werden verarbeitet");
         $('#uploadDemoBtn').html('Verarbeite Daten...');
         $('#orderList').load(endPoints.addSampleOrders, function() {
             showNotification("Die Bestellungen wurden erfolgreich verarbeitet");
