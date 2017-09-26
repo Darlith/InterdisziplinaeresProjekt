@@ -3,7 +3,6 @@ package com.eufh.drohne.analytics;
 import com.eufh.drohne.domain.Coordinates;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class AnalyticsDTO {
 

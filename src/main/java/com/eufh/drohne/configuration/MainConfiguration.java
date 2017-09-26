@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import com.eufh.drohne.business.service.DroneService;
 import com.eufh.drohne.business.service.ProcessedOrderService;
-import com.eufh.drohne.business.service.TestService;
+import com.eufh.drohne.business.service.CoordinateService;
 import com.eufh.drohne.controller.FrontController;
 
 @Configuration
@@ -16,7 +16,7 @@ import com.eufh.drohne.controller.FrontController;
 public class MainConfiguration {
 
 	@Autowired
-	private TestService testService;
+	private CoordinateService testService;
 	
 	@Autowired
 	private DroneService droneService;

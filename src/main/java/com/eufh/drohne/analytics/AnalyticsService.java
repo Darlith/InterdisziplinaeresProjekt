@@ -1,21 +1,18 @@
 package com.eufh.drohne.analytics;
 
-import com.eufh.drohne.business.service.TestService;
-import com.eufh.drohne.business.service.impl.TestServiceImpl;
+import com.eufh.drohne.business.service.CoordinateService;
 import com.eufh.drohne.domain.Coordinates;
 import com.eufh.drohne.domain.Drohne;
 import com.eufh.drohne.domain.ProcessedOrder;
-import org.apache.tomcat.jni.Proc;
 import org.joda.time.Minutes;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class AnalyticsService {
 
-    private TestService coordinatesService;
+    private CoordinateService coordinatesService;
 
-    public AnalyticsService(TestService coordinatesService) {
+    public AnalyticsService(CoordinateService coordinatesService) {
         this.coordinatesService = coordinatesService;
     }
 

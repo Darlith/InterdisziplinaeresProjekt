@@ -2,7 +2,6 @@ package com.eufh.drohne.business.service.impl;
 
 import org.joda.time.DateTime;
 
-import com.eufh.drohne.domain.Order;
 
 public class Route {
 	private OrderLocation originOrderLocation;

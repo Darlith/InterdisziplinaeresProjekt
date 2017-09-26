@@ -3,8 +3,8 @@ package com.eufh.drohne.controller;
 
 import com.eufh.drohne.business.service.DroneService;
 import com.eufh.drohne.business.service.ProcessedOrderService;
-import com.eufh.drohne.business.service.TestService;
-import com.eufh.drohne.business.service.impl.TestServiceImpl;
+import com.eufh.drohne.business.service.CoordinateService;
+import com.eufh.drohne.business.service.impl.DroneSimulation;
 import com.eufh.drohne.domain.CsvOrder;
 import com.eufh.drohne.domain.ProcessedOrder;
 import org.springframework.stereotype.Controller;
@@ -20,11 +20,11 @@ public class PartialController {
 
     private ProcessedOrderService processedOrderService;
 
-    private TestService testService;
+    private CoordinateService testService;
 
     private DroneService droneService;
 
-    public PartialController(ProcessedOrderService processedOrderService, TestService testService, DroneService droneService) {
+    public PartialController(ProcessedOrderService processedOrderService, CoordinateService testService, DroneService droneService) {
         this.processedOrderService = processedOrderService;
         this.testService = testService;
         this.droneService = droneService;
@@ -40,7 +40,7 @@ public class PartialController {
 
     @RequestMapping(value ="/partials/addSampleOrders")
     public String addSampleOrders(Model model) {
-        TestServiceImpl demo = new TestServiceImpl(null, testService, droneService, processedOrderService);
+        DroneSimulation demo = new DroneSimulation(testService, droneService, processedOrderService);
         demo.startWithDefaultOrders();
 
         ArrayList<ProcessedOrder> orders = this.processedOrderService.findAll();
@@ -50,7 +50,7 @@ public class PartialController {
 
     @RequestMapping(value ="/partials/addCsvOrders", method = RequestMethod.POST)
     public String addCsvOrders(@RequestBody CsvOrder[] csvOrders, Model model) {
-        TestServiceImpl demo = new TestServiceImpl(null, testService, droneService, processedOrderService);
+        DroneSimulation demo = new DroneSimulation(testService, droneService, processedOrderService);
         demo.startWithCsvOrders(csvOrders);
 
         ArrayList<ProcessedOrder> orders = this.processedOrderService.findAll();

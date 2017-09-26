@@ -7,7 +7,6 @@ import com.eufh.drohne.analytics.AnalyticsService;
 import com.eufh.drohne.domain.ProcessedOrder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,19 +14,19 @@ import org.springframework.web.bind.annotation.*;
 
 import com.eufh.drohne.business.service.DroneService;
 import com.eufh.drohne.business.service.ProcessedOrderService;
-import com.eufh.drohne.business.service.TestService;
-import com.eufh.drohne.business.service.impl.TestServiceImpl;
+import com.eufh.drohne.business.service.CoordinateService;
 import com.eufh.drohne.domain.Drohne;
 
+@SuppressWarnings("rawtypes")
 @Controller
 public class FrontController {
 
-	private TestService testService;
+	private CoordinateService coordinateService;
 	private DroneService droneService;
 	private ProcessedOrderService processedOrderService;
 
-	public FrontController(TestService testService, DroneService droneService, ProcessedOrderService processedOrderService) {
-		this.testService = testService;
+	public FrontController(CoordinateService testService, DroneService droneService, ProcessedOrderService processedOrderService) {
+		this.coordinateService = testService;
 		this.droneService = droneService;
 		this.processedOrderService = processedOrderService;
 	}
@@ -43,7 +42,7 @@ public class FrontController {
 	@RequestMapping("/validation")
 	String validation(Model model) {
 		// Setzt den Namen der Seite auf der validationHeader.html
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		SecurityContextHolder.getContext().getAuthentication();
 		model.addAttribute("pageName", "Validation");
 		return "validation";
 	}
@@ -98,7 +97,7 @@ public class FrontController {
 		ArrayList<ProcessedOrder> orders = this.processedOrderService.findAll();
 		ArrayList<Drohne> drones = this.droneService.findAll();
 
-		AnalyticsService analyticsService = new AnalyticsService(this.testService);
+		AnalyticsService analyticsService = new AnalyticsService(this.coordinateService);
 		AnalyticsDTO analytics = analyticsService.getAnalyzedData(orders, drones);
 
 		model.addAttribute("analytics", analytics);
