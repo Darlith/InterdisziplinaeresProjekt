@@ -1,6 +1,7 @@
 package com.eufh.drohne;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -12,7 +13,7 @@ import com.eufh.drohne.configuration.MainConfiguration;
 import com.eufh.drohne.configuration.WebApplicationConfig;
 
 @EnableAutoConfiguration
-@Configuration
+@SpringBootConfiguration
 @Import({ MainConfiguration.class, DemoBusinessConfig.class, SecurityConfig.class, WebApplicationConfig.class })
 @EnableJpaRepositories(basePackages = {"com.eufh.drohne.repository"})
 //@SpringBootApplication
